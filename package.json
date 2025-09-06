@@ -13,9 +13,9 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/juicyllama/framework/tree/main/conmmon/utils"
+        "url": "https://github.com/juicyllama/utils"
     },
-    "bugs": "https://github.com/juicyllama/framework",
+    "bugs": "https://github.com/juicyllama/utils/issues",
     "license": "BSD-4-Clause",
     "readmeFilename": "README.md",
     "main": "dist/index.js",
@@ -49,7 +49,6 @@
         "showdown": "2.1.0"
     },
     "devDependencies": {
-        "@juicyllama/dev": "workspace:^",
         "@types/core-js": "^2.5.0"
     }
 }
