@@ -1,8 +1,8 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios'
 
-import { Logger } from './Logger';
+import { Logger } from './Logger'
 
-const logger = new Logger();
+const logger = new Logger()
 
 export class Poll {
     /**
@@ -27,24 +27,24 @@ export class Poll {
         domain?: string,
         uuid?: string
     ): Promise<T> {
-        domain ??= 'common::poll::url';
+        domain ??= 'common::poll::url'
 
         const poll = () => {
-            let attempts = 0;
+            let attempts = 0
             const executePoll = async (resolve: (value: T) => void, reject: (reason?: string) => void) => {
-                logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}: ${url}`);
-                let result;
+                logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}: ${url}`)
+                let result
 
                 try {
-                    result = await axios.get(url, config);
+                    result = await axios.get(url, config)
                 } catch (e: unknown) {
-                    const error = e as Error; // Type assertion to specify the type of 'e' as 'Error'
+                    const error = e as Error // Type assertion to specify the type of 'e' as 'Error'
                     logger.warn(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL Error: ${error.message}`, {
                         error: {
                             message: error.message,
                             stack: error.stack,
                         },
-                    });
+                    })
                 }
 
                 logger.debug(
@@ -52,29 +52,29 @@ export class Poll {
                         result?.status
                     )})`,
                     result?.data
-                );
-                attempts++;
+                )
+                attempts++
 
                 if (validate(result?.data as T)) {
-                    resolve(result?.data as T);
-                    return;
+                    resolve(result?.data as T)
+                    return
                 } else if (attempts === max_attempts) {
-                    reject('Exceeded max attempts');
-                    return;
+                    reject('Exceeded max attempts')
+                    return
                 } else {
-                    setTimeout(() => executePoll(resolve, reject), interval);
+                    setTimeout(() => executePoll(resolve, reject), interval)
                 }
-            };
-            return new Promise(executePoll);
-        };
+            }
+            return new Promise(executePoll)
+        }
 
         return poll()
             .then(result => {
-                return result;
+                return result
             })
             .catch((error: unknown) => {
-                throw new Error((error as Error).message);
-            });
+                throw new Error((error as Error).message)
+            })
     }
 
     /**
@@ -97,10 +97,10 @@ export class Poll {
         domain?: string,
         uuid?: string
     ): Promise<T> {
-        domain ??= 'common::poll::function';
+        domain ??= 'common::poll::function'
 
         const poll = () => {
-            let attempts = 0;
+            let attempts = 0
             const executePoll = async (resolve: (value: T) => void, reject: (reason?: string) => void) => {
                 logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}`, {
                     func: func.toString(),
@@ -108,55 +108,55 @@ export class Poll {
                     max_attempts: max_attempts,
                     domain: domain,
                     uuid: uuid,
-                });
+                })
 
-                let result;
+                let result
 
                 try {
-                    result = await func();
+                    result = await func()
                 } catch (e: unknown) {
-                    const error = e as Error; // Type assertion to specify the type of 'e' as 'Error'
+                    const error = e as Error // Type assertion to specify the type of 'e' as 'Error'
                     logger.warn(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL Error: ${error.message}`, {
                         error: {
                             message: error.message,
                             stack: error.stack,
                         },
-                    });
+                    })
                 }
 
                 logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}: Response`, {
                     result: result,
                     validate: validate.toString(),
-                });
+                })
 
-                attempts++;
+                attempts++
 
                 if (validate(result as T)) {
-                    resolve(result as T);
-                    return;
+                    resolve(result as T)
+                    return
                 } else if (attempts === max_attempts) {
-                    reject('Exceeded max attempts');
-                    return;
+                    reject('Exceeded max attempts')
+                    return
                 } else {
-                    setTimeout(() => executePoll(resolve, reject), interval);
+                    setTimeout(() => executePoll(resolve, reject), interval)
                 }
-            };
-            return new Promise(executePoll);
-        };
+            }
+            return new Promise(executePoll)
+        }
 
         return poll()
             .then(result => {
-                return result;
+                return result
             })
             .catch((e: unknown) => {
-                const error = e as Error;
+                const error = e as Error
                 logger.warn(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL Error: ${error.message}`, {
                     error: {
                         message: error.message,
                         stack: error.stack,
                     },
-                });
-                throw new Error(error.message);
-            });
+                })
+                throw new Error(error.message)
+            })
     }
 }

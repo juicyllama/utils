@@ -54,17 +54,8 @@ export default tseslint.config(
             '@typescript-eslint/no-unsafe-return': 'off', // Relaxed for certain utility functions
             '@typescript-eslint/no-implied-eval': 'off', // Sometimes used in dynamic code
             '@typescript-eslint/prefer-promise-reject-errors': 'off', // Allow non-Error rejections in some cases
-            'import/order': [
-				'error',
-				{
-					groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index']],
-					'newlines-between': 'always',
-					alphabetize: {
-						order: 'asc',
-						caseInsensitive: true,
-					},
-				},
-			],
+            // Disabled because we use Prettier with @trivago/prettier-plugin-sort-imports
+            'import/order': 'off',
 		},
     },
     // Specific overrides for TypeORM/database utility files

@@ -7,17 +7,17 @@ export class Emails {
      */
 
     static maskEmail(email: string): string {
-        const [name, domain] = email.split('@');
-        const lengthName = name.length;
-        const lengthEmail = domain.length;
+        const [name, domain] = email.split('@')
+        const lengthName = name.length
+        const lengthEmail = domain.length
 
-        let maskedName = '';
-        let maskedDomain = '';
+        let maskedName = ''
+        let maskedDomain = ''
 
         if (lengthName > 2) {
-            maskedName = name[0] + '***' + name[lengthName - 1];
+            maskedName = name[0] + '***' + name[lengthName - 1]
         } else {
-            maskedName = name;
+            maskedName = name
         }
 
         if (lengthEmail > 6) {
@@ -28,11 +28,11 @@ export class Emails {
                 domain[lengthEmail - 4] +
                 domain[lengthEmail - 3] +
                 domain[lengthEmail - 2] +
-                domain[lengthEmail - 1];
+                domain[lengthEmail - 1]
         } else {
-            maskedName = domain;
+            maskedName = domain
         }
 
-        return maskedName + '@' + maskedDomain;
+        return maskedName + '@' + maskedDomain
     }
 }

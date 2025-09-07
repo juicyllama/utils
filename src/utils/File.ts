@@ -1,15 +1,14 @@
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
-import { Readable } from 'stream';
+import axios from 'axios'
+import * as crypto from 'crypto'
+import * as fs from 'fs'
+import * as path from 'path'
+import { Readable } from 'stream'
 
-import axios from 'axios';
+import * as mimetypes from '../assets/mimetypes.json'
+import { Logger } from './Logger'
+import { Random } from './Random'
 
-import { Logger } from './Logger';
-import { Random } from './Random';
-import * as mimetypes from '../assets/mimetypes.json';
-
-const logger = new Logger();
+const logger = new Logger()
 
 export class File {
     /**
@@ -22,16 +21,16 @@ export class File {
     static unlink(filePath?: string, dirPath?: string): void {
         try {
             if (dirPath) {
-                fs.rmSync(dirPath, { recursive: true, force: true });
+                fs.rmSync(dirPath, { recursive: true, force: true })
             } else if (filePath) {
-                void fs.promises.unlink(filePath);
+                void fs.promises.unlink(filePath)
             }
         } catch (e: unknown) {
             logger.warn(`[@juicyllama/utils::File::unlink] ${(e as Error).message}`, {
                 filePath: filePath,
                 dirPath: dirPath,
                 e: e,
-            });
+            })
         }
     }
 
@@ -42,14 +41,14 @@ export class File {
      */
 
     static async createTempFileFromString(options: { fileName: string; mimetype: string; content: string }): Promise<{
-        filePath: string;
-        file: Express.Multer.File;
-        dirPath: string;
+        filePath: string
+        file: Express.Multer.File
+        dirPath: string
     }> {
         try {
-            const tempDir = fs.mkdtempSync(path.join(fs.realpathSync('.'), 'temp-'));
-            const tempFilePath = path.join(tempDir, options.fileName);
-            await fs.promises.writeFile(tempFilePath, options.content, 'utf-8');
+            const tempDir = fs.mkdtempSync(path.join(fs.realpathSync('.'), 'temp-'))
+            const tempFilePath = path.join(tempDir, options.fileName)
+            await fs.promises.writeFile(tempFilePath, options.content, 'utf-8')
 
             const temp_file = {
                 fieldname: options.fileName.split('.')[0],
@@ -62,15 +61,15 @@ export class File {
                 destination: tempFilePath,
                 filename: options.fileName,
                 path: tempFilePath,
-            };
+            }
 
             return {
                 filePath: tempFilePath,
                 file: temp_file,
                 dirPath: tempDir,
-            };
+            }
         } catch (error) {
-            throw new Error(`Error creating temporary file: ${String(error)}`);
+            throw new Error(`Error creating temporary file: ${String(error)}`)
         }
     }
 
@@ -81,21 +80,21 @@ export class File {
      */
 
     static createTempFilePath(fileName?: string): {
-        filePath: string;
-        dirPath: string;
-        fileName: string;
+        filePath: string
+        dirPath: string
+        fileName: string
     } {
         try {
-            const tempDir = fs.mkdtempSync(path.join(fs.realpathSync('.'), 'temp-'));
-            fileName ??= Random.String(10);
+            const tempDir = fs.mkdtempSync(path.join(fs.realpathSync('.'), 'temp-'))
+            fileName ??= Random.String(10)
 
             return {
                 filePath: path.join(tempDir, fileName),
                 dirPath: tempDir,
                 fileName: fileName,
-            };
+            }
         } catch (error: unknown) {
-            throw new Error(`Error creating temporary file path: ${String(error)}`);
+            throw new Error(`Error creating temporary file path: ${String(error)}`)
         }
     }
 
@@ -104,9 +103,9 @@ export class File {
      */
 
     static md5Checksum(file: Buffer): string {
-        const hash = crypto.createHash('md5');
-        hash.update(file);
-        return hash.digest('base64');
+        const hash = crypto.createHash('md5')
+        hash.update(file)
+        return hash.digest('base64')
     }
 
     /**
@@ -114,7 +113,7 @@ export class File {
      */
 
     static createFileFromBase64(base64: string, filename: string): Express.Multer.File {
-        const buffer = Buffer.from(base64, 'base64');
+        const buffer = Buffer.from(base64, 'base64')
         const file = {
             fieldname: 'file',
             originalname: filename,
@@ -126,14 +125,14 @@ export class File {
             destination: '',
             filename: filename,
             path: '',
-        };
+        }
 
-        return file;
+        return file
     }
 
     static async downloadFile(url: string): Promise<Express.Multer.File> {
-        const download = await axios.get(url, { responseType: 'arraybuffer' });
-        const filename = url.split('/').pop() ?? ''; // Add default value for filename
+        const download = await axios.get(url, { responseType: 'arraybuffer' })
+        const filename = url.split('/').pop() ?? '' // Add default value for filename
 
         const file: Express.Multer.File = {
             fieldname: 'file',
@@ -146,9 +145,9 @@ export class File {
             destination: '',
             filename: filename,
             path: '',
-        };
+        }
 
-        return file;
+        return file
     }
 
     /**
@@ -156,21 +155,21 @@ export class File {
      */
 
     static getMimeType(fileName: string): string {
-        const ext = fileName.split('.').pop();
-        return ext ? (mimetypes as Record<string, string>)[ext] : 'application/octet-stream';
+        const ext = fileName.split('.').pop()
+        return ext ? (mimetypes as Record<string, string>)[ext] : 'application/octet-stream'
     }
 
     /**
      * Check if a file exists
      */
     static exists(filePath: string): boolean {
-        return fs.existsSync(filePath);
+        return fs.existsSync(filePath)
     }
 
     /**
      * Read a file
      */
     static read(filePath: string): string {
-        return fs.readFileSync(filePath, 'utf-8');
+        return fs.readFileSync(filePath, 'utf-8')
     }
 }

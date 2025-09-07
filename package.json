@@ -51,6 +51,7 @@
         "@commitlint/cli": "^19.8.1",
         "@commitlint/config-conventional": "^19.8.1",
         "@faker-js/faker": "^10.0.0",
+        "@trivago/prettier-plugin-sort-imports": "^5.2.2",
         "@types/core-js": "^2.5.0",
         "@types/jest": "^30.0.0",
         "@types/lodash": "^4.17.20",

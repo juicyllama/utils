@@ -1,6 +1,6 @@
-import { Readable } from 'stream';
+import { Readable } from 'stream'
 
-import { File } from './File';
+import { File } from './File'
 
 export class Json {
     /**
@@ -14,18 +14,18 @@ export class Json {
         mappers: Record<string, string> = {}
     ): Promise<Record<string, unknown>[]> {
         return new Promise((resolve, reject) => {
-            const results: Record<string, unknown>[] = [];
-            const stream = Readable.from(file.buffer);
+            const results: Record<string, unknown>[] = []
+            const stream = Readable.from(file.buffer)
 
             stream
                 .on('data', (data: string) => results.push(...(JSON.parse(data) as Record<string, unknown>[])))
                 .on('end', () => {
-                    resolve(this.changeKeyValues(mappers, results));
+                    resolve(this.changeKeyValues(mappers, results))
                 })
                 .on('error', error => {
-                    reject(error);
-                });
-        });
+                    reject(error)
+                })
+        })
     }
 
     /**
@@ -35,21 +35,21 @@ export class Json {
      */
 
     static async createTempJSONFileFromString(content: string): Promise<{
-        filePath: string;
-        json_file: Express.Multer.File;
-        dirPath: string;
+        filePath: string
+        json_file: Express.Multer.File
+        dirPath: string
     }> {
         const result = await File.createTempFileFromString({
             fileName: 'temp-file.json',
             content: content,
             mimetype: 'application/json',
-        });
+        })
 
         return {
             filePath: result.filePath,
             json_file: result.file,
             dirPath: result.dirPath,
-        };
+        }
     }
 
     /**
@@ -65,32 +65,32 @@ export class Json {
     ): Record<string, unknown>[] {
         if (Object.keys(mappers).length > 0) {
             return results.map((result: Record<string, unknown>) => {
-                const newResult: Record<string, unknown> = {};
+                const newResult: Record<string, unknown> = {}
                 for (const key in result) {
                     if (mappers[key]) {
-                        newResult[mappers[key]] = result[key];
+                        newResult[mappers[key]] = result[key]
                     } else {
-                        newResult[key] = result[key];
+                        newResult[key] = result[key]
                     }
                 }
-                return newResult;
-            });
+                return newResult
+            })
         }
-        return results;
+        return results
     }
 
     static getLocalStorageObject(store_key: string): unknown {
         try {
             if (typeof window === 'undefined' || !window.localStorage) {
-                return null;
+                return null
             }
-            const item = window.localStorage.getItem(store_key);
+            const item = window.localStorage.getItem(store_key)
             if (item === null) {
-                return null;
+                return null
             }
-            return JSON.parse(item);
+            return JSON.parse(item)
         } catch {
-            return null;
+            return null
         }
     }
 }

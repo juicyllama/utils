@@ -3,13 +3,13 @@ export class Measurements {
         abbreviation: 'g',
         name: 'gram',
         name_plural: 'grams',
-    };
+    }
 
     static Ounces = {
         abbreviation: 'oz',
         name: 'ounce',
         name_plural: 'ounces',
-    };
+    }
 
     /**
      * Convert lbs to kg
@@ -19,7 +19,7 @@ export class Measurements {
      */
 
     static LbsToKgs(number: number): number {
-        return Number((number * 0.453592).toFixed(2));
+        return Number((number * 0.453592).toFixed(2))
     }
 
     /**
@@ -30,7 +30,7 @@ export class Measurements {
      */
 
     static KgsToLbs(number: number): number {
-        return Number((number * 2.20462).toFixed(2));
+        return Number((number * 2.20462).toFixed(2))
     }
 
     /**
@@ -38,7 +38,7 @@ export class Measurements {
      */
 
     static GramsToOz(number: number): number {
-        return Number((number * 0.035274).toFixed(2));
+        return Number((number * 0.035274).toFixed(2))
     }
 
     /**
@@ -49,9 +49,9 @@ export class Measurements {
      */
 
     static FtInchesToCm(number: number): number {
-        const [feet, inches] = number.toString().split('.');
-        const totalInches = Number(feet) * 12 + Number(inches);
-        return Number((totalInches * 2.54).toFixed(2));
+        const [feet, inches] = number.toString().split('.')
+        const totalInches = Number(feet) * 12 + Number(inches)
+        return Number((totalInches * 2.54).toFixed(2))
     }
 
     /**
@@ -62,9 +62,9 @@ export class Measurements {
      */
 
     static CmToFtInches(num: number): number {
-        const totalInches = num / 2.54;
-        const feet = Math.floor(totalInches / 12);
-        const inches = Number(totalInches.toFixed(2)) - feet * 12;
-        return Number(`${feet}.${inches.toFixed(0)}`);
+        const totalInches = num / 2.54
+        const feet = Math.floor(totalInches / 12)
+        const inches = Number(totalInches.toFixed(2)) - feet * 12
+        return Number(`${feet}.${inches.toFixed(0)}`)
     }
 }

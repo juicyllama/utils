@@ -4,7 +4,7 @@ export class Functions {
      */
 
     static whoIsMyDaddy() {
-        const ex = new Error();
-        return (ex.stack ?? '').split('\n')[3].trim().split(' ')[1];
+        const ex = new Error()
+        return (ex.stack ?? '').split('\n')[3].trim().split(' ')[1]
     }
 }

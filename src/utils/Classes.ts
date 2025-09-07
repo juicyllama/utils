@@ -1,4 +1,4 @@
-type Constructor<T = object> = new (...args: any[]) => T;
+type Constructor<T = object> = new (...args: any[]) => T
 
 /**
  * A utility class for working with classes.
@@ -19,27 +19,27 @@ export class Classes {
     ): new (...args: any[][]) => UnionToIntersection<InstanceType<TBase[number]>> {
         class BaseClass extends (baseClasses[0] ?? class {}) {
             constructor(...args: any[][]) {
-                super(...args[0]); // Assuming the first set of args is for the base class
+                super(...args[0]) // Assuming the first set of args is for the base class
                 // Call constructors of all mixins
                 baseClasses.slice(1).forEach((Base, index) => {
-                    Object.assign(this, new Base(...args[index + 1]));
-                });
+                    Object.assign(this, new Base(...args[index + 1]))
+                })
             }
         }
 
         // Apply mixins
         baseClasses.slice(1).forEach(baseClass => {
             Object.getOwnPropertyNames(baseClass.prototype).forEach(name => {
-                const descriptor = Object.getOwnPropertyDescriptor(baseClass.prototype, name);
+                const descriptor = Object.getOwnPropertyDescriptor(baseClass.prototype, name)
                 if (descriptor) {
-                    Object.defineProperty(BaseClass.prototype, name, descriptor);
+                    Object.defineProperty(BaseClass.prototype, name, descriptor)
                 }
-            });
-        });
+            })
+        })
 
-        return BaseClass as new (...args: any[][]) => UnionToIntersection<InstanceType<TBase[number]>>;
+        return BaseClass as new (...args: any[][]) => UnionToIntersection<InstanceType<TBase[number]>>
     }
 }
 
 // Helper type for converting a union of types to an intersection
-type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void ? I : never

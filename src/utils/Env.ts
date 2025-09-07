@@ -1,8 +1,8 @@
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+import * as fs from 'fs'
+import * as os from 'os'
+import * as path from 'path'
 
-import { Environment, fromStringToEnv } from '../enums/env';
+import { Environment, fromStringToEnv } from '../enums/env'
 
 export class Env {
     /**
@@ -10,7 +10,7 @@ export class Env {
      */
 
     static get(): Environment {
-        return fromStringToEnv();
+        return fromStringToEnv()
     }
 
     /**
@@ -18,7 +18,7 @@ export class Env {
      */
 
     static IsProd(): boolean {
-        return this.get() === Environment.production;
+        return this.get() === Environment.production
     }
 
     /**
@@ -26,7 +26,7 @@ export class Env {
      */
 
     static IsDev(): boolean {
-        return this.get() === Environment.development;
+        return this.get() === Environment.development
     }
 
     /**
@@ -34,7 +34,7 @@ export class Env {
      */
 
     static IsTest(): boolean {
-        return this.get() === Environment.test;
+        return this.get() === Environment.test
     }
 
     /**
@@ -42,7 +42,7 @@ export class Env {
      */
 
     static IsNotTest(): boolean {
-        return this.get() !== Environment.test;
+        return this.get() !== Environment.test
     }
 
     /**
@@ -50,7 +50,7 @@ export class Env {
      */
 
     static IsNotProd(): boolean {
-        return this.get() !== Environment.production;
+        return this.get() !== Environment.production
     }
 
     /**
@@ -58,37 +58,37 @@ export class Env {
      */
 
     static IsSandbox(): boolean {
-        return this.get() === Environment.sandbox;
+        return this.get() === Environment.sandbox
     }
 
     //todo allow a .env value to override this if exists
     static useCache(): boolean {
-        return this.IsNotTest();
+        return this.IsNotTest()
     }
 
     /**
      * Reads the .env file and returns an array of lines
      */
     static readEnvVars(options: { envPath: string; fileName: string }) {
-        if (!options.envPath) options.envPath = './';
-        if (!options.fileName) options.fileName = '.env';
+        if (!options.envPath) options.envPath = './'
+        if (!options.fileName) options.fileName = '.env'
 
-        return fs.readFileSync(path.resolve(options.envPath, options.fileName), 'utf-8').split(os.EOL);
+        return fs.readFileSync(path.resolve(options.envPath, options.fileName), 'utf-8').split(os.EOL)
     }
 
     /**
      * Finds the key in .env files and returns the corresponding value
      */
     static getEnvValue(options: { key: string; envPath: string; fileName: string }): string {
-        if (!options.envPath) options.envPath = './';
-        if (!options.fileName) options.fileName = '.env';
+        if (!options.envPath) options.envPath = './'
+        if (!options.fileName) options.fileName = '.env'
 
         const matchedLine = Env.readEnvVars({
             envPath: options.envPath,
             fileName: options.fileName,
-        }).find(line => line.split('=')[0] === options.key);
-        const result = matchedLine !== undefined ? matchedLine.split('=')[1] : null;
-        return result !== null ? result.replace(/"/g, '') : '';
+        }).find(line => line.split('=')[0] === options.key)
+        const result = matchedLine !== undefined ? matchedLine.split('=')[1] : null
+        return result !== null ? result.replace(/"/g, '') : ''
     }
 
     /**
@@ -96,25 +96,25 @@ export class Env {
      * This function is a modified version of https://stackoverflow.com/a/65001580/3153583
      */
     static setEnvValue(options: { key: string; value: string; envPath?: string; fileName?: string }) {
-        options.envPath ??= './';
-        options.fileName ??= '.env';
+        options.envPath ??= './'
+        options.fileName ??= '.env'
 
         const envVars = Env.readEnvVars({
             envPath: options.envPath,
             fileName: options.fileName,
-        });
-        const targetLine = envVars.find(line => line.split('=')[0] === options.key);
+        })
+        const targetLine = envVars.find(line => line.split('=')[0] === options.key)
         if (targetLine !== undefined) {
             // update existing line
-            const targetLineIndex = envVars.indexOf(targetLine);
+            const targetLineIndex = envVars.indexOf(targetLine)
             // replace the key/value with the new value
-            envVars.splice(targetLineIndex, 1, `${options.key}="${options.value}"`);
+            envVars.splice(targetLineIndex, 1, `${options.key}="${options.value}"`)
         } else {
             // create new key value
-            envVars.push(`${options.key}="${options.value}"`);
+            envVars.push(`${options.key}="${options.value}"`)
         }
         // write everything back to the file
-        fs.writeFileSync(path.resolve(options.envPath, options.fileName), envVars.join(os.EOL));
+        fs.writeFileSync(path.resolve(options.envPath, options.fileName), envVars.join(os.EOL))
     }
 
     static setEnv(options: { values: Record<string, string>; envPath?: string; fileName?: string }) {
@@ -124,7 +124,7 @@ export class Env {
                 value: options.values[key],
                 envPath: options.envPath,
                 fileName: options.fileName,
-            });
+            })
         }
     }
 }

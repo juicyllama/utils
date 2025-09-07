@@ -1,8 +1,7 @@
-import { Readable } from 'stream';
+import csvParser from 'csv-parser'
+import { Readable } from 'stream'
 
-import csvParser from 'csv-parser';
-
-import { File } from './File';
+import { File } from './File'
 
 export class Csv {
     /**
@@ -16,29 +15,29 @@ export class Csv {
         mappers?: Record<string, string>
     ): Promise<Record<string, unknown>[]> {
         return new Promise((resolve, reject) => {
-            const results: Record<string, unknown>[] = [];
-            const stream = Readable.from(file.buffer);
+            const results: Record<string, unknown>[] = []
+            const stream = Readable.from(file.buffer)
 
             stream
                 .pipe(
                     csvParser({
                         mapHeaders: ({ header }) => {
                             if (header.charCodeAt(0) === 0xfeff) {
-                                header = header.replace(/^\uFEFF/gm, '');
+                                header = header.replace(/^\uFEFF/gm, '')
                             }
 
-                            return mappers?.[header] ?? header;
+                            return mappers?.[header] ?? header
                         },
                     })
                 )
                 .on('data', (data: Record<string, unknown>) => results.push(data))
                 .on('end', () => {
-                    resolve(results);
+                    resolve(results)
                 })
                 .on('error', error => {
-                    reject(error);
-                });
-        });
+                    reject(error)
+                })
+        })
     }
 
     /**
@@ -48,24 +47,24 @@ export class Csv {
      */
 
     static async createTempCSVFileFromString(content: string): Promise<{
-        filePath: string;
-        csv_file: Express.Multer.File;
-        dirPath: string;
+        filePath: string
+        csv_file: Express.Multer.File
+        dirPath: string
     }> {
         try {
             const result = await File.createTempFileFromString({
                 fileName: 'temp-file.csv',
                 content: content,
                 mimetype: 'text/csv',
-            });
+            })
 
             return {
                 filePath: result.filePath,
                 csv_file: result.file,
                 dirPath: result.dirPath,
-            };
+            }
         } catch (error) {
-            throw new Error(`Error creating temporary file: ${error as string}`);
+            throw new Error(`Error creating temporary file: ${error as string}`)
         }
     }
 }

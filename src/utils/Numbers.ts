@@ -1,4 +1,4 @@
-import { SupportedCurrencies } from '../enums/currencies';
+import { SupportedCurrencies } from '../enums/currencies'
 
 export class Numbers {
     /**
@@ -9,8 +9,8 @@ export class Numbers {
      */
 
     static amountToCents(number: number): number {
-        const cents = (number * 100).toFixed(0);
-        return Number(cents);
+        const cents = (number * 100).toFixed(0)
+        return Number(cents)
     }
 
     /**
@@ -22,9 +22,9 @@ export class Numbers {
         const formatter = new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: currency,
-        });
+        })
 
-        return formatter.format(number);
+        return formatter.format(number)
     }
 
     /**
@@ -36,8 +36,8 @@ export class Numbers {
             style: 'decimal',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
-        });
+        })
 
-        return formatter.format(number);
+        return formatter.format(number)
     }
 }

@@ -1,5 +1,5 @@
-import { Strings } from './Strings';
-import CODES from '../assets/dailing_codes.json';
+import CODES from '../assets/dailing_codes.json'
+import { Strings } from './Strings'
 
 export class Phone {
     /**
@@ -10,7 +10,7 @@ export class Phone {
      */
 
     static internationalCode(iso2: string): string {
-        const code = CODES[iso2 as keyof typeof CODES].dialling_code;
-        return Strings.onlyNumbers(code);
+        const code = CODES[iso2 as keyof typeof CODES].dialling_code
+        return Strings.onlyNumbers(code)
     }
 }

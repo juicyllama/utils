@@ -8,14 +8,14 @@ export enum Environment {
 export function fromStringToEnv(env = process.env.NODE_ENV): Environment {
     switch (env) {
         case 'production':
-            return Environment.production;
+            return Environment.production
         case 'sandbox':
-            return Environment.sandbox;
+            return Environment.sandbox
         case 'development':
-            return Environment.development;
+            return Environment.development
         case 'test':
-            return Environment.test;
+            return Environment.test
         default:
-            return Environment.development;
+            return Environment.development
     }
 }

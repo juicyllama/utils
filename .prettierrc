@@ -1,5 +1,5 @@
 {
-  "semi": true,
+  "semi": false,
   "singleQuote": true,
   "trailingComma": "es5",
   "endOfLine": "auto",
@@ -8,5 +8,12 @@
   "printWidth": 120,
   "arrowParens": "avoid",
   "bracketSpacing": true,
-  "bracketSameLine": true
+  "bracketSameLine": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "importOrder": [
+    "^@?\\w",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }

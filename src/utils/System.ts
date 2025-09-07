@@ -4,6 +4,6 @@ export class System {
      */
 
     static isOffline(): boolean {
-        return !!process.env.OFFLINE;
+        return !!process.env.OFFLINE
     }
 }

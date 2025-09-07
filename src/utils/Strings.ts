@@ -1,4 +1,4 @@
-import { Logger } from './Logger';
+import { Logger } from './Logger'
 
 export class Strings {
     /**
@@ -10,19 +10,19 @@ export class Strings {
 
     static capitalize(str: string): string {
         try {
-            if (typeof str !== 'string') return '';
-            if (str.length === 0) return '';
+            if (typeof str !== 'string') return ''
+            if (str.length === 0) return ''
 
-            return str.charAt(0).toUpperCase() + str.slice(1);
+            return str.charAt(0).toUpperCase() + str.slice(1)
         } catch (e: unknown) {
-            const logger = new Logger();
+            const logger = new Logger()
             logger.warn(`[Utils::Strings::capitalize] ${e instanceof Error ? e.message : String(e)}`, {
                 str: str,
-            });
+            })
             if (e instanceof Error) {
-                logger.warn(`[Utils::Strings::capitalize] Stack Trace`, e.stack);
+                logger.warn(`[Utils::Strings::capitalize] Stack Trace`, e.stack)
             }
-            return '';
+            return ''
         }
     }
 
@@ -35,9 +35,9 @@ export class Strings {
      */
 
     static replacer(template: string, obj: Record<string, any>) {
-        const keys = Object.keys(obj);
-        const func = Function(...keys, 'return `' + template + '`;');
-        return func(...keys.map(k => obj[k]));
+        const keys = Object.keys(obj)
+        const func = Function(...keys, 'return `' + template + '`;')
+        return func(...keys.map(k => obj[k]))
     }
 
     /**
@@ -48,20 +48,20 @@ export class Strings {
      */
 
     static numbersToLetters(number: number): string {
-        let letters = '';
+        let letters = ''
 
-        const alphabet = 'ABCDEFGHIJ';
+        const alphabet = 'ABCDEFGHIJ'
 
         for (let n = 0; n < number.toString().length; n++) {
-            const num = Number(number.toString().slice(n, n + 1));
-            letters += alphabet.charAt(num);
+            const num = Number(number.toString().slice(n, n + 1))
+            letters += alphabet.charAt(num)
         }
 
-        return letters;
+        return letters
     }
 
     static numbersTo26Letters(number: number): string {
-        return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(number);
+        return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(number)
     }
 
     /**
@@ -72,13 +72,13 @@ export class Strings {
      */
 
     static toHTMLConversion(string: string): string {
-        string = string.replace(/\n/g, '<br />');
-        return string;
+        string = string.replace(/\n/g, '<br />')
+        return string
     }
 
     static fromHTMLtoStringConversion(string: string): string {
-        string = string.replace(/<[^>]*>/g, '');
-        return string;
+        string = string.replace(/<[^>]*>/g, '')
+        return string
     }
 
     /**
@@ -93,11 +93,11 @@ export class Strings {
 
     static az09Lowercase(string: string, skipClean?: boolean): string {
         if (!skipClean) {
-            string = string.replace(/-/gi, '');
-            string = string.replace(/ /gi, '');
+            string = string.replace(/-/gi, '')
+            string = string.replace(/ /gi, '')
         }
 
-        return string.toLowerCase();
+        return string.toLowerCase()
     }
 
     /**
@@ -108,7 +108,7 @@ export class Strings {
      */
 
     static onlyNumbers(string: string): string {
-        return string.replace(/\D/g, '');
+        return string.replace(/\D/g, '')
     }
 
     /**
@@ -121,7 +121,7 @@ export class Strings {
      */
     static plural(word: string, amount?: number): string {
         if (amount !== undefined && amount === 1) {
-            return word;
+            return word
         }
         const plural: Record<string, string> = {
             '(quiz)$': '$1zes',
@@ -142,7 +142,7 @@ export class Strings {
             '(ax|test)is$': '$1es',
             '(us)$': '$1es',
             '([^s]+)$': '$1s',
-        };
+        }
         const irregular: Record<string, string> = {
             move: 'moves',
             foot: 'feet',
@@ -152,7 +152,7 @@ export class Strings {
             man: 'men',
             tooth: 'teeth',
             person: 'people',
-        };
+        }
         const uncountable: string[] = [
             'sheep',
             'fish',
@@ -179,27 +179,27 @@ export class Strings {
             'tuna',
             'you',
             'wood',
-        ];
+        ]
         // save some time in the case that singular and plural are the same
         if (uncountable.includes(word.toLowerCase())) {
-            return word;
+            return word
         }
         // check for irregular forms
         for (const w in irregular) {
-            const pattern = new RegExp(`${w}$`, 'i');
-            const replace = irregular[w];
+            const pattern = new RegExp(`${w}$`, 'i')
+            const replace = irregular[w]
             if (pattern.test(word)) {
-                return word.replace(pattern, replace);
+                return word.replace(pattern, replace)
             }
         }
         // check for matches using regular expressions
         for (const reg in plural) {
-            const pattern = new RegExp(reg, 'i');
+            const pattern = new RegExp(reg, 'i')
             if (pattern.test(word)) {
-                return word.replace(pattern, plural[reg]);
+                return word.replace(pattern, plural[reg])
             }
         }
-        return word;
+        return word
     }
 
     /**
@@ -212,7 +212,7 @@ export class Strings {
      */
     static singular(word: string, amount?: number): string {
         if (amount !== undefined && amount !== 1) {
-            return word;
+            return word
         }
         const singular: Record<string, string> = {
             '(quiz)zes$': '$1',
@@ -243,7 +243,7 @@ export class Strings {
             '(corpse)s$': '$1',
             '(us)es$': '$1',
             s$: '',
-        };
+        }
         const irregular: Record<string, string> = {
             move: 'moves',
             foot: 'feet',
@@ -253,7 +253,7 @@ export class Strings {
             man: 'men',
             tooth: 'teeth',
             person: 'people',
-        };
+        }
         const uncountable: string[] = [
             'sheep',
             'fish',
@@ -280,27 +280,27 @@ export class Strings {
             'tuna',
             'you',
             'wood',
-        ];
+        ]
         // save some time in the case that singular and plural are the same
         if (uncountable.includes(word.toLowerCase())) {
-            return word;
+            return word
         }
         // check for irregular forms
         for (const w in irregular) {
-            const pattern = new RegExp(`${irregular[w]}$`, 'i');
-            const replace = w;
+            const pattern = new RegExp(`${irregular[w]}$`, 'i')
+            const replace = w
             if (pattern.test(word)) {
-                return word.replace(pattern, replace);
+                return word.replace(pattern, replace)
             }
         }
         // check for matches using regular expressions
         for (const reg in singular) {
-            const pattern = new RegExp(reg, 'i');
+            const pattern = new RegExp(reg, 'i')
             if (pattern.test(word)) {
-                return word.replace(pattern, singular[reg]);
+                return word.replace(pattern, singular[reg])
             }
         }
-        return word;
+        return word
     }
 
     /**
@@ -310,18 +310,18 @@ export class Strings {
      * @returns {string}
      */
     static stringToEmojis(string: string): string {
-        string = string.replace(/:warning:/g, '⚠️');
-        string = string.replace(/:zero:/g, '0️⃣️');
-        string = string.replace(/:one:/g, '1️⃣️');
-        string = string.replace(/:two:/g, '2️⃣️');
-        string = string.replace(/:three:/g, '3️⃣');
-        string = string.replace(/:four:/g, '4️⃣️');
-        string = string.replace(/:five:/g, '5️⃣️');
-        string = string.replace(/:six:/g, '6️⃣️');
-        string = string.replace(/:seven:/g, '7️⃣');
-        string = string.replace(/:eight:/g, '8️⃣️');
-        string = string.replace(/:nine:/g, '9️⃣️');
-        return string;
+        string = string.replace(/:warning:/g, '⚠️')
+        string = string.replace(/:zero:/g, '0️⃣️')
+        string = string.replace(/:one:/g, '1️⃣️')
+        string = string.replace(/:two:/g, '2️⃣️')
+        string = string.replace(/:three:/g, '3️⃣')
+        string = string.replace(/:four:/g, '4️⃣️')
+        string = string.replace(/:five:/g, '5️⃣️')
+        string = string.replace(/:six:/g, '6️⃣️')
+        string = string.replace(/:seven:/g, '7️⃣')
+        string = string.replace(/:eight:/g, '8️⃣️')
+        string = string.replace(/:nine:/g, '9️⃣️')
+        return string
     }
 
     /**
@@ -331,45 +331,45 @@ export class Strings {
      */
 
     static numberToSlackEmojis(number: number): string {
-        const parts = number.toString().slice();
-        let string = '';
+        const parts = number.toString().slice()
+        let string = ''
 
         for (const part of parts) {
             switch (part) {
                 case '0':
-                    string += ':zero:';
-                    break;
+                    string += ':zero:'
+                    break
                 case '1':
-                    string += ':one:';
-                    break;
+                    string += ':one:'
+                    break
                 case '2':
-                    string += ':two:';
-                    break;
+                    string += ':two:'
+                    break
                 case '3':
-                    string += ':three:';
-                    break;
+                    string += ':three:'
+                    break
                 case '4':
-                    string += ':four:';
-                    break;
+                    string += ':four:'
+                    break
                 case '5':
-                    string += ':five:';
-                    break;
+                    string += ':five:'
+                    break
                 case '6':
-                    string += ':six:';
-                    break;
+                    string += ':six:'
+                    break
                 case '7':
-                    string += ':seven:';
-                    break;
+                    string += ':seven:'
+                    break
                 case '8':
-                    string += ':eight:';
-                    break;
+                    string += ':eight:'
+                    break
                 case '9':
-                    string += ':nine:';
-                    break;
+                    string += ':nine:'
+                    break
             }
         }
 
-        return string;
+        return string
     }
 
     /**
@@ -380,8 +380,8 @@ export class Strings {
         return string
             .split('')
             .sort(function () {
-                return 0.5 - Math.random();
+                return 0.5 - Math.random()
             })
-            .join('');
+            .join('')
     }
 }

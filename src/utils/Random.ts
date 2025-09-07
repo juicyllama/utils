@@ -1,5 +1,5 @@
-import { Strings } from './Strings';
-import FACTS from '../assets/llama.facts.json';
+import FACTS from '../assets/llama.facts.json'
+import { Strings } from './Strings'
 
 // Simple mock for faker
 const faker = {
@@ -13,15 +13,15 @@ const faker = {
     },
     datatype: {
         number: (options?: { min?: number; max?: number }) => {
-            const min = options?.min ?? 0;
-            const max = options?.max ?? 100;
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+            const min = options?.min ?? 0
+            const max = options?.max ?? 100
+            return Math.floor(Math.random() * (max - min + 1)) + min
         },
     },
     lorem: {
         words: (count = 3) => {
-            const words = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit'];
-            return Array.from({ length: count }, () => words[Math.floor(Math.random() * words.length)]).join(' ');
+            const words = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit']
+            return Array.from({ length: count }, () => words[Math.floor(Math.random() * words.length)]).join(' ')
         },
     },
     word: {
@@ -30,90 +30,90 @@ const faker = {
         adjective: () => 'adjective',
         adverb: () => 'adverb',
     },
-};
+}
 
 const UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     LOWERCASE = 'abcdefghijklmnopqrstuvwxyz',
     NUMBERS = '0123456789',
-    SYMBOLS = '!@£$%^&*()_+=-{}[]<>?:;~';
+    SYMBOLS = '!@£$%^&*()_+=-{}[]<>?:;~'
 
 export class Random {
     static LlamaFact(): string {
-        return FACTS[Math.floor(Math.random() * FACTS.length)];
+        return FACTS[Math.floor(Math.random() * FACTS.length)]
     }
 
     static get uppercase() {
-        return UPPERCASE[Math.floor(Math.random() * UPPERCASE.length)];
+        return UPPERCASE[Math.floor(Math.random() * UPPERCASE.length)]
     }
 
     static get lowercase() {
-        return LOWERCASE[Math.floor(Math.random() * LOWERCASE.length)];
+        return LOWERCASE[Math.floor(Math.random() * LOWERCASE.length)]
     }
 
     static get number() {
-        return NUMBERS[Math.floor(Math.random() * NUMBERS.length)];
+        return NUMBERS[Math.floor(Math.random() * NUMBERS.length)]
     }
 
     static get symbol() {
-        return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]
     }
 
     static Number(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min) + min);
+        return Math.floor(Math.random() * (max - min) + min)
     }
 
     static String(length?: number): string {
-        length ??= Math.floor(Math.random() * 8) + 5;
+        length ??= Math.floor(Math.random() * 8) + 5
 
-        let result = '';
+        let result = ''
 
         for (let i = 0; i < length; i++) {
             switch (Math.floor(Math.random() * 3)) {
                 case 0:
-                    result += this.uppercase;
-                    break;
+                    result += this.uppercase
+                    break
                 case 1:
-                    result += this.lowercase;
-                    break;
+                    result += this.lowercase
+                    break
                 case 2:
-                    result += this.number;
-                    break;
+                    result += this.number
+                    break
             }
         }
-        return result;
+        return result
     }
 
     static Password(length?: number): string {
-        length ??= 16;
+        length ??= 16
 
-        let result = '';
+        let result = ''
 
         //string must contain uppercase, lowercase, number and special characters
 
-        const quotient = Math.floor(length / 4);
-        const remainder = 4 % length;
+        const quotient = Math.floor(length / 4)
+        const remainder = 4 % length
 
         for (let l = 0; l < 4; l++) {
             for (let i = 0; i < quotient; i++) {
                 switch (l) {
                     case 0:
-                        result += this.uppercase;
-                        break;
+                        result += this.uppercase
+                        break
                     case 1:
-                        result += this.lowercase;
-                        break;
+                        result += this.lowercase
+                        break
                     case 2:
-                        result += this.number;
-                        break;
+                        result += this.number
+                        break
                     case 3:
-                        result += this.symbol;
-                        break;
+                        result += this.symbol
+                        break
                 }
             }
         }
 
-        result += this.String(remainder);
-        return Strings.randomize(result);
+        result += this.String(remainder)
+        return Strings.randomize(result)
     }
 
     static Words(
@@ -122,41 +122,41 @@ export class Random {
         type?: 'noun' | 'adjective' | 'adverb',
         transform?: 'capitalize'
     ): string {
-        seperator ??= ' ';
-        length ??= Math.floor(Math.random() * 5) + 1;
+        seperator ??= ' '
+        length ??= Math.floor(Math.random() * 5) + 1
 
-        let result = '';
+        let result = ''
 
         for (let i = 0; i < length; i++) {
-            let word = '';
+            let word = ''
 
             if (!type) {
-                word = faker.word.sample();
+                word = faker.word.sample()
             } else {
                 switch (type) {
                     case 'noun':
-                        word = faker.word.noun();
-                        break;
+                        word = faker.word.noun()
+                        break
                     case 'adjective':
-                        word = faker.word.adjective();
-                        break;
+                        word = faker.word.adjective()
+                        break
                     case 'adverb':
-                        word = faker.word.adverb();
-                        break;
+                        word = faker.word.adverb()
+                        break
                 }
             }
 
             if (transform === 'capitalize') {
-                result += Strings.capitalize(word);
+                result += Strings.capitalize(word)
             } else {
-                result += word;
+                result += word
             }
 
             if (i < length - 1) {
-                result += seperator;
+                result += seperator
             }
         }
 
-        return result;
+        return result
     }
 }

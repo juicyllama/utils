@@ -1,15 +1,16 @@
-import { isNil } from 'lodash';
+import { isNil } from 'lodash'
 
-import { Logger } from './Logger';
-import COUNTRIES from '../assets/countries.json';
-import { Country } from '../types/countries';
+import COUNTRIES from '../assets/countries.json'
+import { Country } from '../types/countries'
+import { Logger } from './Logger'
+
 export class Countries {
     /**
      * Takes in an ISO2 country code and returns the ISO3 version
      */
 
     static convertISO2ToISO3(iso2: string): string | null {
-        if (!iso2 || isNil(iso2)) return null;
+        if (!iso2 || isNil(iso2)) return null
         const ISO2toISO3: Record<string, string> = {
             BD: 'BGD',
             BE: 'BEL',
@@ -261,14 +262,14 @@ export class Countries {
             UA: 'UKR',
             QA: 'QAT',
             MZ: 'MOZ',
-        };
+        }
 
         try {
-            return ISO2toISO3[iso2];
+            return ISO2toISO3[iso2]
         } catch (e: unknown) {
-            const logger = new Logger();
-            logger.error(`[Utils::Countries::convertISO2ToISO3] ${(e as Error).message}`, (e as Error).stack);
-            return null;
+            const logger = new Logger()
+            logger.error(`[Utils::Countries::convertISO2ToISO3] ${(e as Error).message}`, (e as Error).stack)
+            return null
         }
     }
 
@@ -277,17 +278,17 @@ export class Countries {
      */
 
     static countryNameToISO2(countryName: string) {
-        if (!countryName || isNil(countryName)) return null;
+        if (!countryName || isNil(countryName)) return null
 
         try {
             const foundCountry = COUNTRIES.find(
                 country => country['Country Name'].toLowerCase() === countryName.toLowerCase()
-            );
-            return foundCountry ? foundCountry.ISO2 : null;
+            )
+            return foundCountry ? foundCountry.ISO2 : null
         } catch (e: unknown) {
-            const logger = new Logger();
-            logger.error(`[Utils::Countries::countryNameToISO2] ${(e as Error).message}`, (e as Error).stack);
-            return null;
+            const logger = new Logger()
+            logger.error(`[Utils::Countries::countryNameToISO2] ${(e as Error).message}`, (e as Error).stack)
+            return null
         }
     }
 
@@ -297,14 +298,14 @@ export class Countries {
      */
 
     static getCountry(ISO2: string): Country | undefined {
-        if (!ISO2 || isNil(ISO2)) return;
+        if (!ISO2 || isNil(ISO2)) return
 
         try {
-            return COUNTRIES.find(country => country.ISO2 === ISO2.toUpperCase()) as Country;
+            return COUNTRIES.find(country => country.ISO2 === ISO2.toUpperCase()) as Country
         } catch (e: unknown) {
-            const logger = new Logger();
-            logger.error(`[Utils::Countries::getCountry] ${(e as Error).message}`, (e as Error).stack);
-            return;
+            const logger = new Logger()
+            logger.error(`[Utils::Countries::getCountry] ${(e as Error).message}`, (e as Error).stack)
+            return
         }
     }
 }

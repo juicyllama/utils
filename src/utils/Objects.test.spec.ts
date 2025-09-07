@@ -1,4 +1,4 @@
-import { Objects } from './Objects';
+import { Objects } from './Objects'
 
 describe('Objects', () => {
     it('clean', async () => {
@@ -7,9 +7,9 @@ describe('Objects', () => {
             b: undefined,
             c: 'undefined',
             d: '',
-        };
+        }
 
-        const cleaned = Objects.clean(object);
-        expect(cleaned).toEqual({ a: 'a' });
-    });
-});
+        const cleaned = Objects.clean(object)
+        expect(cleaned).toEqual({ a: 'a' })
+    })
+})

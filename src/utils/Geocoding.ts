@@ -1,44 +1,44 @@
-import bbox from '@turf/bbox';
-import bboxPolygon from '@turf/bbox-polygon';
-import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
-import buffer from '@turf/buffer';
-import distance from '@turf/distance';
-import { point, polygon } from '@turf/helpers';
+import bbox from '@turf/bbox'
+import bboxPolygon from '@turf/bbox-polygon'
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
+import buffer from '@turf/buffer'
+import distance from '@turf/distance'
+import { point, polygon } from '@turf/helpers'
 
 export interface Coordinates {
-    latitude: number;
-    longitude: number;
+    latitude: number
+    longitude: number
 }
 
 export interface BoundingBox {
-    north: number;
-    east: number;
-    south: number;
-    west: number;
+    north: number
+    east: number
+    south: number
+    west: number
 }
 
 export class Geocoding {
     static areCoordinatesInBoundingBox(coordinates: Coordinates, boundingBox: BoundingBox): boolean {
         // Define the bounding box polygon using the northeast and southwest coordinates
-        const _bboxPolygon = bboxPolygon([boundingBox.west, boundingBox.south, boundingBox.east, boundingBox.north]);
+        const _bboxPolygon = bboxPolygon([boundingBox.west, boundingBox.south, boundingBox.east, boundingBox.north])
 
         // Convert the target coordinates to a turf point
-        const pointToCheck = point([coordinates.longitude, coordinates.latitude]);
+        const pointToCheck = point([coordinates.longitude, coordinates.latitude])
 
         // Check if the point lies within the bounding box polygon
-        const isPointInBbox = booleanPointInPolygon(pointToCheck, _bboxPolygon);
+        const isPointInBbox = booleanPointInPolygon(pointToCheck, _bboxPolygon)
 
-        return isPointInBbox;
+        return isPointInBbox
     }
 
     static areCoordinatesInPolygon(coordinates: Coordinates, polygonCords: Coordinates[]): boolean {
-        const pointToCheck = point([coordinates.longitude, coordinates.latitude]);
-        const poly = polygon([polygonCords.map((p: Coordinates) => [p.longitude, p.latitude])]);
+        const pointToCheck = point([coordinates.longitude, coordinates.latitude])
+        const poly = polygon([polygonCords.map((p: Coordinates) => [p.longitude, p.latitude])])
 
         // Check if the point lies within the bounding box polygon
-        const isPointInBbox = booleanPointInPolygon(pointToCheck, poly);
+        const isPointInBbox = booleanPointInPolygon(pointToCheck, poly)
 
-        return isPointInBbox;
+        return isPointInBbox
     }
 
     /**
@@ -59,14 +59,14 @@ export class Geocoding {
         expand_by_meters?: number
     ): boolean {
         if (!southwest.longitude || !southwest.latitude || !northeast.longitude || !northeast.latitude) {
-            return false;
+            return false
         }
 
         if (expand_by_meters) {
             try {
-                const expandedBoundingBox = Geocoding.expandBoundingBox(northeast, southwest, expand_by_meters);
-                northeast = expandedBoundingBox.northeast;
-                southwest = expandedBoundingBox.southwest;
+                const expandedBoundingBox = Geocoding.expandBoundingBox(northeast, southwest, expand_by_meters)
+                northeast = expandedBoundingBox.northeast
+                southwest = expandedBoundingBox.southwest
             } catch {
                 //do nothing
             }
@@ -76,7 +76,7 @@ export class Geocoding {
             east: northeast.longitude,
             south: southwest.latitude,
             west: southwest.longitude,
-        });
+        })
     }
 
     /**
@@ -93,17 +93,17 @@ export class Geocoding {
             southwest.latitude,
             northeast.longitude,
             northeast.latitude,
-        ]);
+        ])
 
         const buffered = buffer(_bboxPolygon, expand_by_meters, {
             units: 'meters',
-        });
+        })
 
         if (!buffered) {
-            throw new Error('Could not expand bounding box');
+            throw new Error('Could not expand bounding box')
         }
 
-        const newBoundingBox = bbox(buffered) as [number, number, number, number];
+        const newBoundingBox = bbox(buffered) as [number, number, number, number]
 
         return {
             northeast: {
@@ -114,7 +114,7 @@ export class Geocoding {
                 latitude: newBoundingBox[1],
                 longitude: newBoundingBox[0],
             },
-        };
+        }
     }
 
     /**
@@ -122,9 +122,9 @@ export class Geocoding {
      */
 
     static getDistance(from: Coordinates, to: Coordinates): number {
-        const from_point = point([from.longitude, from.latitude]);
-        const to_point = point([to.longitude, to.latitude]);
-        return distance(from_point, to_point, { units: 'meters' });
+        const from_point = point([from.longitude, from.latitude])
+        const to_point = point([to.longitude, to.latitude])
+        return distance(from_point, to_point, { units: 'meters' })
     }
 
     /**
@@ -135,13 +135,13 @@ export class Geocoding {
         return {
             latitude: (northeast.latitude + southwest.latitude) / 2,
             longitude: (northeast.longitude + southwest.longitude) / 2,
-        };
+        }
     }
 
     static getDistanceBetweenTwoPoints(point1: Coordinates, point2: Coordinates): number {
-        const from = point([point1.longitude, point1.latitude]);
-        const to = point([point2.longitude, point2.latitude]);
-        const options = { units: 'kilometers' as const };
-        return distance(from, to, options);
+        const from = point([point1.longitude, point1.latitude])
+        const to = point([point2.longitude, point2.latitude])
+        const options = { units: 'kilometers' as const }
+        return distance(from, to, options)
     }
 }

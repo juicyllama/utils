@@ -1,6 +1,7 @@
-import * as path from 'path';
+import * as path from 'path'
 
-import { Env } from './Env';
+import { Env } from './Env'
+
 describe('Env', () => {
     it('setEnvValue', () => {
         Env.setEnvValue({
@@ -8,15 +9,15 @@ describe('Env', () => {
             value: 'development',
             envPath: './',
             fileName: path.resolve(__dirname, 'env.env'),
-        });
-    });
+        })
+    })
 
     it('getEnvValue', () => {
         const result = Env.getEnvValue({
             key: 'NODE_ENV',
             envPath: './',
             fileName: path.resolve(__dirname, 'env.env'),
-        });
-        expect(result).toEqual('development');
-    });
-});
+        })
+        expect(result).toEqual('development')
+    })
+})

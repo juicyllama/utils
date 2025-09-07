@@ -1,4 +1,4 @@
-import { Enums } from './Enums';
+import { Enums } from './Enums'
 
 enum example {
     VIEWER_WITHOUT_REVENUE = 1,
@@ -16,27 +16,27 @@ enum example2 {
 
 describe('Enums', () => {
     it('getKeyName', () => {
-        const getKeyName = Enums.getKeyName(example, 1);
-        expect(getKeyName).toEqual('VIEWER_WITHOUT_REVENUE');
-    });
+        const getKeyName = Enums.getKeyName(example, 1)
+        expect(getKeyName).toEqual('VIEWER_WITHOUT_REVENUE')
+    })
 
     it('toArray', () => {
-        const toArray = Enums.toArray(example, 'key', 'value');
+        const toArray = Enums.toArray(example, 'key', 'value')
         expect(toArray).toEqual([
             { key: 'VIEWER_WITHOUT_REVENUE', value: 1 },
             { key: 'VIEWER', value: 3 },
             { key: 'MEMBER', value: 5 },
             { key: 'ADMIN', value: 7 },
             { key: 'OWNER', value: 9 },
-        ]);
-    });
+        ])
+    })
 
     it('toArray', () => {
-        const toArray = Enums.toArray(example2, 'key', 'value');
+        const toArray = Enums.toArray(example2, 'key', 'value')
         expect(toArray).toEqual([
             { key: 'USD', value: 'USD' },
             { key: 'EUR', value: 'EUR' },
             { key: 'GBP', value: 'GBP' },
-        ]);
-    });
-});
+        ])
+    })
+})
