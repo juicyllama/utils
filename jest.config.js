@@ -8,6 +8,7 @@ module.exports = {
 	rootDir: 'src',
 	testTimeout: 120000,
 	testRegex: [/.*\.spec\.ts$/],
+	setupFilesAfterEnv: ['<rootDir>/../jest.setup.js'],
 	transform: {
 		'^.+\\.{ts|tsx}?$': [
 			'ts-jest',
