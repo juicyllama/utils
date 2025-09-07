@@ -1,10 +1,8 @@
 import { isNil } from 'lodash';
 
 import { Logger } from './Logger';
+import COUNTRIES from '../assets/countries.json';
 import { Country } from '../types/countries';
-
-const COUNTRIES = require('../assets/countries.json');
-
 export class Countries {
     /**
      * Takes in an ISO2 country code and returns the ISO3 version

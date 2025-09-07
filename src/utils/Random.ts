@@ -1,6 +1,5 @@
 import { Strings } from './Strings';
-
-const FACTS = require('../assets/llama.facts.json');
+import FACTS from '../assets/llama.facts.json';
 
 // Simple mock for faker
 const faker = {
