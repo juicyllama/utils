@@ -27,7 +27,7 @@
     "scripts": {
         "prebuild": "rimraf dist",
         "prepare": "npm run build && husky",
-        "build": "tsc",
+        "build": "tsc -p tsconfig.build.json",
         "start:dev": "tsc -w",
         "format": "prettier --write \"src/**/*.ts\"",
         "lint": "eslint \"src/**/*.ts\" --fix",
