@@ -1,1 +1,1 @@
-npx lint-staged --cwd backend
+npx lint-staged
