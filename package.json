@@ -26,13 +26,13 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "prebuild": "rimraf dist",
-        "prepare": "pnpm run build && husky",
+        "prepare": "npm run build && husky",
         "build": "tsc",
         "start:dev": "tsc -w",
         "format": "prettier --write \"src/**/*.ts\"",
         "lint": "eslint \"src/**/*.ts\" --fix",
         "test": "NODE_ENV=test && jest --runInBand --passWithNoTests",
-        "before:commit": "pnpm run lint && pnpm run format && pnpm run test && pnpm run build"
+        "before:commit": "npm run lint && npm run format && npm run test && npm run build"
     },
     "dependencies": {
         "@turf/bbox": "^7.2.0",
