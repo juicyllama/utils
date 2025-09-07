@@ -1,8 +1,8 @@
 import { Readable } from 'stream';
 
-import csvParser from 'csv-parser';
-
 import { File } from './File';
+
+const csvParser = require('csv-parser');
 
 export class Csv {
     /**

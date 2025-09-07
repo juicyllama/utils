@@ -39,10 +39,9 @@ export class Api {
                 response = await axios.get<T>(url, config);
             }
 
+            const responseLength = Array.isArray(response.data) ? response.data.length : 1;
             logger.debug(
-                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()} length=${(
-                    response.data as unknown[]
-                ).length.toString()}`
+                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()} length=${responseLength.toString()}`
             );
             logger.verbose(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Response data`, response.data);
 

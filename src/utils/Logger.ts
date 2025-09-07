@@ -1,24 +1,8 @@
 import { Env } from './Env';
-import { Modules } from './Modules';
-
-/* eslint @typescript-eslint/no-var-requires: "off" */
-
 const DEFAULT_LOG_LEVEL = 3;
-
-interface Bugsnag {
-    addMetadata: (key: string, value: unknown) => void;
-    notify: (error: Error) => void;
-}
 
 export class Logger {
     data(key: string, value: unknown): void {
-        if (Env.IsNotTest()) {
-            if (Modules.bugsnag.isInstalled) {
-                void Modules.bugsnag.load().then((Bugsnag: Bugsnag) => {
-                    Bugsnag.addMetadata(key, value);
-                });
-            }
-        }
         this.verbose(`[${key}]=>${JSON.stringify(value)}`);
     }
 
@@ -31,21 +15,6 @@ export class Logger {
 
         if (this.getLogLevel() <= 5) {
             console.error(colored);
-        }
-
-        if (Env.IsNotTest()) {
-            //reduce noise (e.g. errors in other applications we cannot control)
-            switch (message) {
-                case 'Unexpected token o in JSON at position 1':
-                case 'Unexpected token o in JSON at position 1SyntaxError: Unexpected token o in JSON at position 1':
-                    break;
-                default:
-                    if (Modules.bugsnag.isInstalled) {
-                        void Modules.bugsnag.load().then((Bugsnag: Bugsnag) => {
-                            Bugsnag.notify(new Error(message));
-                        });
-                    }
-            }
         }
     }
 

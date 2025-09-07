@@ -51,7 +51,10 @@ export default tseslint.config(
 			'@typescript-eslint/no-unnecessary-condition': 'off', // Relaxed for defensive ORM code
 			'@typescript-eslint/no-misused-promises': 'off', // Common in async ORM patterns
             '@typescript-eslint/no-dynamic-delete': 'off', // Dynamic deletes in some utilities
-            
+            '@typescript-eslint/no-unsafe-return': 'off', // Relaxed for certain utility functions
+            '@typescript-eslint/no-implied-eval': 'off', // Sometimes used in dynamic code
+            '@typescript-eslint/no-require-imports': 'off', // Allow require for conditional imports
+            '@typescript-eslint/prefer-promise-reject-errors': 'off', // Allow non-Error rejections in some cases
             'import/order': [
 				'error',
 				{

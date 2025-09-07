@@ -1,7 +1,17 @@
-import { faker } from '@faker-js/faker';
-
 import { File } from './File';
 import { Json } from './Json';
+
+// Simple mock for faker
+const faker = {
+    person: {
+        firstName: () => 'John',
+        lastName: () => 'Doe',
+    },
+    internet: {
+        email: ({ firstName, lastName }: { firstName: string; lastName: string }) =>
+            `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
+    },
+};
 
 describe('JSON', () => {
     it('createTempJSONFileFromString', async () => {
@@ -28,7 +38,7 @@ describe('JSON', () => {
         });
 
         const { json_file, filePath, dirPath } = await Json.createTempJSONFileFromString(
-            `[{ "first_name": "${first_name}", "last_name": "${last_name}", "email": "${email}"}]`,
+            `[{ "first_name": "${first_name}", "last_name": "${last_name}", "email": "${email}"}]`
         );
 
         const result = (await Json.parseJsonFile(json_file)) as { first_name: string }[];
@@ -40,7 +50,7 @@ describe('JSON', () => {
 
     it('parseJSONFile with mapped headers', async () => {
         const { json_file, filePath, dirPath } = await Json.createTempJSONFileFromString(
-            '[{ "name": "Tom", "type": "Cat"}, { "name": "Jerry", "type": "Mouse"}]',
+            '[{ "name": "Tom", "type": "Cat"}, { "name": "Jerry", "type": "Mouse"}]'
         );
 
         const result = (await Json.parseJsonFile(json_file, { type: 'animal' })) as {

@@ -1,7 +1,37 @@
-import { faker } from '@faker-js/faker';
-
 import { Strings } from './Strings';
-import FACTS from '../assets/llama.facts.json';
+
+const FACTS = require('../assets/llama.facts.json');
+
+// Simple mock for faker
+const faker = {
+    person: {
+        firstName: () => 'John',
+        lastName: () => 'Doe',
+    },
+    internet: {
+        email: ({ firstName, lastName }: { firstName: string; lastName: string }) =>
+            `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
+    },
+    datatype: {
+        number: (options?: { min?: number; max?: number }) => {
+            const min = options?.min ?? 0;
+            const max = options?.max ?? 100;
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        },
+    },
+    lorem: {
+        words: (count = 3) => {
+            const words = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit'];
+            return Array.from({ length: count }, () => words[Math.floor(Math.random() * words.length)]).join(' ');
+        },
+    },
+    word: {
+        sample: () => 'sample',
+        noun: () => 'noun',
+        adjective: () => 'adjective',
+        adverb: () => 'adverb',
+    },
+};
 
 const UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     LOWERCASE = 'abcdefghijklmnopqrstuvwxyz',

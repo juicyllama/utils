@@ -34,13 +34,10 @@ export class Strings {
      * @param {Object} obj
      */
 
-    static replacer(template: string, obj: Record<string, string | number | boolean>): string {
-        let str = template;
-        for (const key of Object.keys(obj)) {
-            const regex = new RegExp(`\\$\\{${key}\\}`, 'gi');
-            str = str.replace(regex, String(obj[key]));
-        }
-        return str;
+    static replacer(template: string, obj: Record<string, any>) {
+        const keys = Object.keys(obj);
+        const func = Function(...keys, 'return `' + template + '`;');
+        return func(...keys.map(k => obj[k]));
     }
 
     /**

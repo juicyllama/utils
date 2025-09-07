@@ -1,4 +1,4 @@
-type Constructor<T = object> = new (...args: unknown[]) => T;
+type Constructor<T = object> = new (...args: any[]) => T;
 
 /**
  * A utility class for working with classes.
@@ -16,9 +16,9 @@ export class Classes {
      */
     static ExtendsMultiple<TBase extends Constructor[]>(
         baseClasses: TBase
-    ): new (...args: unknown[][]) => UnionToIntersection<InstanceType<TBase[number]>> {
+    ): new (...args: any[][]) => UnionToIntersection<InstanceType<TBase[number]>> {
         class BaseClass extends (baseClasses[0] ?? class {}) {
-            constructor(...args: unknown[][]) {
+            constructor(...args: any[][]) {
                 super(...args[0]); // Assuming the first set of args is for the base class
                 // Call constructors of all mixins
                 baseClasses.slice(1).forEach((Base, index) => {
@@ -37,7 +37,7 @@ export class Classes {
             });
         });
 
-        return BaseClass as new (...args: unknown[][]) => UnionToIntersection<InstanceType<TBase[number]>>;
+        return BaseClass as new (...args: any[][]) => UnionToIntersection<InstanceType<TBase[number]>>;
     }
 }
 

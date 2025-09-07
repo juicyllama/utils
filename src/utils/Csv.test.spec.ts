@@ -1,7 +1,17 @@
-import { faker } from '@faker-js/faker';
-
 import { Csv } from './Csv';
 import { File } from './File';
+
+// Simple mock for faker
+const faker = {
+    person: {
+        firstName: () => 'John',
+        lastName: () => 'Doe',
+    },
+    internet: {
+        email: ({ firstName, lastName }: { firstName: string; lastName: string }) =>
+            `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
+    },
+};
 
 describe('CSV', () => {
     it('createTempCSVFileFromString', async () => {

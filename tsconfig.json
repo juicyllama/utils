@@ -1,52 +1,23 @@
-/* Reference: https://www.youtube.com/watch?v=eJXVEju3XLM */
 {
-    "compilerOptions": {
-
-        /* Base Options */
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "target": "es6",
-        //"verbatimModuleSyntax": true,
-        "resolveJsonModule": true,
-        "moduleDetection": "force",
-        //"allowJs": true,
-
-        /* Strictness */
-        "strict": true, //We need to look at enabling this and fixing errors
-        //"noUncheckedIndexedAccess": true, //We need to look at enabling this and fixing errors
-
-        /* Transpiling with typescript */
-        "module": "nodenext", //to move to NodeNext when NestJs allows
-        "moduleResolution": "nodenext", //to move to NodeNext when NestJs allows
-        "sourceMap": true,
-        
-        /* MonoRepo */
-       // "composite": true,
-       // "declarationMap": true,
-
-        /* Others */
-        "preserveSymlinks": true,
-        "declaration": true,
-        "removeComments": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
-        "forceConsistentCasingInFileNames": true,
-        "noLib": false,
-      
-        "types": [
-            "node",
-            "jest",
-			"multer",
-            "core-js"
-        ],
-    },
-    "exclude": [
-        "**/node_modules",
-		"**/dist",
-        "**/*spec.ts",
-        "**/*.test.spec.ts",
-        "**/*.test.paused.ts",
-        "**/*.test.config.ts"
-    ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true,
+  }
 }
