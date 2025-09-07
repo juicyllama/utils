@@ -1,67 +1,55 @@
 export class Locale {
-	getLocale() {
-		const nav = window.navigator
-		const browserLanguagePropertyKeys = ['language', 'browserLanguage', 'systemLanguage', 'userLanguage']
-		let i,
-			language,
-			len,
-			shortLanguage = null
+    getLocale(): string {
+        if (typeof window === 'undefined' || typeof window.navigator === 'undefined') {
+            return process.env.DEFAULT_LOCALE ?? process.env.VITE_DEFAULT_LOCALE ?? 'en-US';
+        }
 
-		// support for HTML 5.1 "navigator.languages"
-		if (Array.isArray(nav.languages)) {
-			for (i = 0; i < nav.languages.length; i++) {
-				language = nav.languages[i]
-				len = language.length
-				if (!shortLanguage && len) {
-					shortLanguage = language
-				}
-				if (language && len > 2) {
-					return language
-				}
-			}
-		}
+        const nav = window.navigator;
 
-		// support for other well known properties in browsers
-		for (i = 0; i < browserLanguagePropertyKeys.length; i++) {
-			language = nav[browserLanguagePropertyKeys[i] as keyof Navigator]
-			//skip this loop iteration if property is null/undefined.  IE11 fix.
-			if (language == null) {
-				continue
-			}
-			if (typeof language === 'string') {
-				// Add this line to ensure language is of type string
-				len = language.length
-				if (!shortLanguage && len) {
-					shortLanguage = language
-				}
-				if (language && len > 2) {
-					return language
-				}
-			}
-		}
+        // support for HTML 5.1 "navigator.languages"
+        if (Array.isArray(nav.languages)) {
+            for (const language of nav.languages) {
+                if (typeof language === 'string' && language.length > 2) {
+                    return language;
+                }
+            }
+        }
 
-		if (shortLanguage) {
-			return shortLanguage
-		}
+        // support for other well known properties in browsers
+        if ('language' in nav && nav.language && typeof nav.language === 'string') {
+            return nav.language;
+        }
 
-		if (process?.env?.DEFAULT_LOCALE) {
-			return process.env.DEFAULT_LOCALE
-		}
+        if ('browserLanguage' in nav && typeof nav.browserLanguage === 'string') {
+            return nav.browserLanguage;
+        }
 
-		if (process?.env?.VITE_DEFAULT_LOCALE) {
-			return process.env.VITE_DEFAULT_LOCALE
-		}
+        if ('systemLanguage' in nav && typeof nav.systemLanguage === 'string') {
+            return nav.systemLanguage;
+        }
 
-		return 'en-US'
-	}
+        if ('userLanguage' in nav && typeof nav.userLanguage === 'string') {
+            return nav.userLanguage;
+        }
 
-	getCountry() {
-		const locale = new Locale()
-		return locale.getLocale().split('-')[1]
-	}
+        return process.env.DEFAULT_LOCALE ?? process.env.VITE_DEFAULT_LOCALE ?? 'en-US';
+    }
 
-	getLanguage() {
-		const locale = new Locale()
-		return locale.getLocale().split('-')[0]
-	}
+    getCountry(): string {
+        const locale = new Locale();
+        const localeString = locale.getLocale();
+        if (localeString.includes('-')) {
+            return localeString.split('-')[1];
+        }
+        return '';
+    }
+
+    getLanguage(): string {
+        const locale = new Locale();
+        const localeString = locale.getLocale();
+        if (localeString.includes('-')) {
+            return localeString.split('-')[0];
+        }
+        return localeString;
+    }
 }

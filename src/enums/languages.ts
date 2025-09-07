@@ -1,3 +1,3 @@
 export enum SupportedLanguages {
-	ENGLISH = 'en',
+    ENGLISH = 'en',
 }

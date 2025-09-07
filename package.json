@@ -26,7 +26,7 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "prebuild": "rimraf dist",
-        "prepare": "pnpm run build",
+        "prepare": "pnpm run build && husky",
         "build": "tsc",
         "start:dev": "tsc -w",
         "format": "prettier --write \"src/**/*.ts\"",
@@ -43,12 +43,25 @@
         "@turf/distance": "^6.5.0",
         "@turf/helpers": "^6.5.0",
         "axios": "latest",
+        "class-validator": "^0.14.2",
         "csv-parser": "3.0.0",
-        "dayjs": "1.11.10",
-        "parquetjs": "0.11.2",
+        "jwt-simple": "^0.5.6",
+        "lodash": "^4.17.21",
         "showdown": "2.1.0"
     },
     "devDependencies": {
-        "@types/core-js": "^2.5.0"
+        "@faker-js/faker": "^10.0.0",
+        "@types/core-js": "^2.5.0",
+        "@types/jest": "^30.0.0",
+        "@types/lodash": "^4.17.20",
+        "@types/multer": "^2.0.0",
+        "eslint": "^9.35.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-import": "^2.32.0",
+        "eslint-plugin-prettier": "^5.5.4",
+        "husky": "^9.1.7",
+        "jest": "^29.7.0",
+        "rimraf": "^6.0.1",
+        "typescript-eslint": "^8.42.0"
     }
 }

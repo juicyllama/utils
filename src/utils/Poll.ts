@@ -1,156 +1,162 @@
-import axios, { AxiosRequestConfig } from 'axios'
-import { Logger } from './Logger'
+import axios, { AxiosRequestConfig } from 'axios';
 
-const logger = new Logger()
+import { Logger } from './Logger';
+
+const logger = new Logger();
 
 export class Poll {
-	/**
-	 * Runs a poll request and returns the result once successful
-	 *
-	 * @param {function} validate
-	 * @param {string} url
-	 * @param {AxiosRequestConfig} config
-	 * @param {int} [interval] seconds defaults to 2000
-	 * @param {int} [max_attempts] number of attempts before exiting defaults to 10
-	 * @param {string} [domain]
-	 * @param {string} [uuid]
-	 * @return object
-	 */
+    /**
+     * Runs a poll request and returns the result once successful
+     *
+     * @param {function} validate
+     * @param {string} url
+     * @param {AxiosRequestConfig} config
+     * @param {int} [interval] seconds defaults to 2000
+     * @param {int} [max_attempts] number of attempts before exiting defaults to 10
+     * @param {string} [domain]
+     * @param {string} [uuid]
+     * @return object
+     */
 
-	async url(
-		validate: any,
-		url: string,
-		config?: AxiosRequestConfig,
-		interval = 2000,
-		max_attempts = 10,
-		domain?: string,
-		uuid?: string,
-	): Promise<any> {
-		if (!domain) {
-			domain = 'common::poll::url'
-		}
+    async url<T>(
+        validate: (data: T) => boolean,
+        url: string,
+        config?: AxiosRequestConfig,
+        interval = 2000,
+        max_attempts = 10,
+        domain?: string,
+        uuid?: string
+    ): Promise<T> {
+        domain ??= 'common::poll::url';
 
-		const poll = () => {
-			let attempts = 0
-			const executePoll = async (resolve: (value: any) => void, reject: (reason?: any) => void) => {
-				logger.debug(`[${domain}][${uuid}]} POLL #${attempts + 1}: ${url}`)
+        const poll = () => {
+            let attempts = 0;
+            const executePoll = async (resolve: (value: T) => void, reject: (reason?: string) => void) => {
+                logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}: ${url}`);
+                let result;
 
-				let result
+                try {
+                    result = await axios.get(url, config);
+                } catch (e: unknown) {
+                    const error = e as Error; // Type assertion to specify the type of 'e' as 'Error'
+                    logger.warn(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL Error: ${error.message}`, {
+                        error: {
+                            message: error.message,
+                            stack: error.stack,
+                        },
+                    });
+                }
 
-				try {
-					result = await axios.get(url, config)
-				} catch (e) {
-					const error = e as Error // Type assertion to specify the type of 'e' as 'Error'
-					logger.warn(`[${domain}][${uuid}] POLL Error: ${error.message}`, {
-						error: {
-							message: error.message,
-							stack: error.stack,
-						},
-					})
-				}
+                logger.debug(
+                    `[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}: Response (${String(
+                        result?.status
+                    )})`,
+                    result?.data
+                );
+                attempts++;
 
-				logger.debug(`[${domain}][${uuid}]} POLL #${attempts + 1}: Response (${result?.status})`, result?.data)
+                if (validate(result?.data as T)) {
+                    resolve(result?.data as T);
+                    return;
+                } else if (attempts === max_attempts) {
+                    reject('Exceeded max attempts');
+                    return;
+                } else {
+                    setTimeout(() => executePoll(resolve, reject), interval);
+                }
+            };
+            return new Promise(executePoll);
+        };
 
-				attempts++
+        return poll()
+            .then(result => {
+                return result;
+            })
+            .catch((error: unknown) => {
+                throw new Error((error as Error).message);
+            });
+    }
 
-				if (validate(result?.data)) {
-					return resolve(result?.data)
-				} else if (attempts === max_attempts) {
-					return reject('Exceeded max attempts')
-				} else {
-					setTimeout(executePoll, interval, resolve, reject)
-				}
-			}
-			return new Promise(executePoll)
-		}
+    /**
+     * Runs a poll request on a function
+     *
+     * @param {function} validate
+     * @param {function} func
+     * @param {int} [interval] seconds defaults to 2000
+     * @param {int} [max_attempts] number of attempts before exiting defaults to 10
+     * @param {string} [domain]
+     * @param {string} [uuid]
+     * @return object
+     */
 
-		return poll()
-			.then(result => {
-				return result
-			})
-			.catch(error => {
-				throw Error(error)
-			})
-	}
+    async function<T>(
+        validate: (data: T) => boolean,
+        func: () => Promise<T>,
+        interval = 2000,
+        max_attempts = 10,
+        domain?: string,
+        uuid?: string
+    ): Promise<T> {
+        domain ??= 'common::poll::function';
 
-	/**
-	 * Runs a poll request on a function
-	 *
-	 * @param {function} validate
-	 * @param {function} func
-	 * @param {int} [interval] seconds defaults to 2000
-	 * @param {int} [max_attempts] number of attempts before exiting defaults to 10
-	 * @param {string} [domain]
-	 * @param {string} [uuid]
-	 * @return object
-	 */
+        const poll = () => {
+            let attempts = 0;
+            const executePoll = async (resolve: (value: T) => void, reject: (reason?: string) => void) => {
+                logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}`, {
+                    func: func.toString(),
+                    interval: `${String(interval)}ms`,
+                    max_attempts: max_attempts,
+                    domain: domain,
+                    uuid: uuid,
+                });
 
-	async function(
-		validate: any,
-		func: any,
-		interval = 2000,
-		max_attempts = 10,
-		domain?: string,
-		uuid?: string,
-	): Promise<any> {
-		if (!domain) {
-			domain = 'common::poll::function'
-		}
+                let result;
 
-		const poll = () => {
-			let attempts = 0
-			const executePoll = async (resolve: (value: any) => void, reject: (reason?: any) => void) => {
-				logger.debug(`[${domain}][${uuid}]} POLL #${attempts + 1}`, {
-					func: func.toString(),
-					interval: interval,
-					max_attempts: max_attempts,
-					domain: domain,
-					uuid: uuid,
-				})
+                try {
+                    result = await func();
+                } catch (e: unknown) {
+                    const error = e as Error; // Type assertion to specify the type of 'e' as 'Error'
+                    logger.warn(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL Error: ${error.message}`, {
+                        error: {
+                            message: error.message,
+                            stack: error.stack,
+                        },
+                    });
+                }
 
-				let result
+                logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}: Response`, {
+                    result: result,
+                    validate: validate.toString(),
+                });
 
-				try {
-					result = await func()
-				} catch (e) {
-					const error = e as Error // Type assertion to specify the type of 'e' as 'Error'
-					logger.warn(`[${domain}][${uuid}] POLL Error: ${error.message}`, {
-						error: {
-							message: error.message,
-							stack: error.stack,
-						},
-					})
-				}
+                attempts++;
 
-				logger.debug(`[${domain}][${uuid}]} POLL #${attempts + 1}: Response`, {
-					result: result,
-					validate: validate.toString(),
-				})
+                if (validate(result as T)) {
+                    resolve(result as T);
+                    return;
+                } else if (attempts === max_attempts) {
+                    reject('Exceeded max attempts');
+                    return;
+                } else {
+                    setTimeout(() => executePoll(resolve, reject), interval);
+                }
+            };
+            return new Promise(executePoll);
+        };
 
-				attempts++
-
-				if (validate(result)) {
-					return resolve(result)
-				} else if (attempts === max_attempts) {
-					return reject('Exceeded max attempts')
-				} else {
-					setTimeout(executePoll, interval, resolve, reject)
-				}
-			}
-			return new Promise(executePoll)
-		}
-
-		return poll()
-			.then(result => {
-				return result
-			})
-			.catch(e => {
-				logger.warn(`[${domain}][${uuid}] POLL Error: ${e.message}`, {
-					error: {
-						message: e.message,
-						stack: e.stack,
-					},
-				})
-			})
-	}
+        return poll()
+            .then(result => {
+                return result;
+            })
+            .catch((e: unknown) => {
+                const error = e as Error;
+                logger.warn(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL Error: ${error.message}`, {
+                    error: {
+                        message: error.message,
+                        stack: error.stack,
+                    },
+                });
+                throw new Error(error.message);
+            });
+    }
 }

@@ -1,123 +1,147 @@
-import bboxPolygon from '@turf/bbox-polygon'
-import { point, polygon } from '@turf/helpers'
-import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
-//@ts-ignore
-import buffer from '@turf/buffer'
-import bbox from '@turf/bbox'
-import distance from '@turf/distance'
+import bbox from '@turf/bbox';
+import bboxPolygon from '@turf/bbox-polygon';
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
+import buffer from '@turf/buffer';
+import distance from '@turf/distance';
+import { point, polygon } from '@turf/helpers';
 
 export interface Coordinates {
-	latitude: number
-	longitude: number
+    latitude: number;
+    longitude: number;
 }
 
 export interface BoundingBox {
-	north: number
-	east: number
-	south: number
-	west: number
+    north: number;
+    east: number;
+    south: number;
+    west: number;
 }
 
 export class Geocoding {
-	static areCoordinatesInBoundingBox(coordinates: Coordinates, boundingBox: BoundingBox): boolean {
-		// Define the bounding box polygon using the northeast and southwest coordinates
-		const _bboxPolygon = bboxPolygon([boundingBox.west, boundingBox.south, boundingBox.east, boundingBox.north])
+    static areCoordinatesInBoundingBox(coordinates: Coordinates, boundingBox: BoundingBox): boolean {
+        // Define the bounding box polygon using the northeast and southwest coordinates
+        const _bboxPolygon = bboxPolygon([boundingBox.west, boundingBox.south, boundingBox.east, boundingBox.north]);
 
-		// Convert the target coordinates to a turf point
-		const pointToCheck = point([coordinates.longitude, coordinates.latitude])
+        // Convert the target coordinates to a turf point
+        const pointToCheck = point([coordinates.longitude, coordinates.latitude]);
 
-		// Check if the point lies within the bounding box polygon
-		const isPointInBbox = booleanPointInPolygon(pointToCheck, _bboxPolygon)
+        // Check if the point lies within the bounding box polygon
+        const isPointInBbox = booleanPointInPolygon(pointToCheck, _bboxPolygon);
 
-		return isPointInBbox
-	}
+        return isPointInBbox;
+    }
 
-	static areCoordinatesInPolygon(coordinates: Coordinates, polygonCords: Coordinates[]): boolean {
-		const pointToCheck = point([coordinates.longitude, coordinates.latitude])
-		const poly = polygon([polygonCords.map((p: Coordinates) => [p.longitude, p.latitude])])
+    static areCoordinatesInPolygon(coordinates: Coordinates, polygonCords: Coordinates[]): boolean {
+        const pointToCheck = point([coordinates.longitude, coordinates.latitude]);
+        const poly = polygon([polygonCords.map((p: Coordinates) => [p.longitude, p.latitude])]);
 
-		// Check if the point lies within the bounding box polygon
-		const isPointInBbox = booleanPointInPolygon(pointToCheck, poly)
+        // Check if the point lies within the bounding box polygon
+        const isPointInBbox = booleanPointInPolygon(pointToCheck, poly);
 
-		return isPointInBbox
-	}
+        return isPointInBbox;
+    }
 
-	/**
-	 * @function    areCoordinatesBetweenTwoPoints
-	 * @description Determines if a point P = (p.x, p.y) lies on the line connecting points S = (S.x, S.y) and E = (E.x, E.y) by calculating the determinant of the matrix. A point is considered to belong to the line if the precision of the calculation is small enough (tests for errors and loss of precision).
-	 * @param       {Coordinates} northeast   The start point
-	 * @param       {Coordinates} southwest     The end point
-	 * @param       {Coordinates} coordinates   The point we which to test.
-	 * @param       {number}      expand_by_meters  To add a buffer of space around the points
-	 *	@returns     <code>true</code> if the given point belongs to the line, <code>false</code> otherwise.
-	 *	@see         {@link http://stackoverflow.com/a/907491/1337392|Distance Matrix Calculation}
-	 */
+    /**
+     * @function    areCoordinatesBetweenTwoPoints
+     * @description Determines if a point P = (p.x, p.y) lies on the line connecting points S = (S.x, S.y) and E = (E.x, E.y) by calculating the determinant of the matrix. A point is considered to belong to the line if the precision of the calculation is small enough (tests for errors and loss of precision).
+     * @param       {Coordinates} northeast   The start point
+     * @param       {Coordinates} southwest     The end point
+     * @param       {Coordinates} coordinates   The point we which to test.
+     * @param       {number}      expand_by_meters  To add a buffer of space around the points
+     *	@returns     <code>true</code> if the given point belongs to the line, <code>false</code> otherwise.
+     *	@see         {@link http://stackoverflow.com/a/907491/1337392|Distance Matrix Calculation}
+     */
 
-	static areCoordinatesBetweenTwoPoints(
-		coordinates: Coordinates,
-		northeast: Coordinates,
-		southwest: Coordinates,
-		expand_by_meters?: number,
-	): boolean {
-		if (!southwest?.longitude || !southwest?.latitude || !northeast?.longitude || !northeast?.latitude) {
-			return false
-		}
+    static areCoordinatesBetweenTwoPoints(
+        coordinates: Coordinates,
+        northeast: Coordinates,
+        southwest: Coordinates,
+        expand_by_meters?: number
+    ): boolean {
+        if (!southwest.longitude || !southwest.latitude || !northeast.longitude || !northeast.latitude) {
+            return false;
+        }
 
-		if (expand_by_meters) {
-			const expandedBoundingBox = Geocoding.expandBoundingBox(northeast, southwest, expand_by_meters)
-			northeast = expandedBoundingBox.northeast
-			southwest = expandedBoundingBox.southwest
-		}
+        if (expand_by_meters) {
+            try {
+                const expandedBoundingBox = Geocoding.expandBoundingBox(northeast, southwest, expand_by_meters);
+                northeast = expandedBoundingBox.northeast;
+                southwest = expandedBoundingBox.southwest;
+            } catch {
+                //do nothing
+            }
+        }
+        return Geocoding.areCoordinatesInBoundingBox(coordinates, {
+            north: northeast.latitude,
+            east: northeast.longitude,
+            south: southwest.latitude,
+            west: southwest.longitude,
+        });
+    }
 
-		return Geocoding.areCoordinatesInBoundingBox(coordinates, {
-			north: northeast.latitude,
-			east: northeast.longitude,
-			south: southwest.latitude,
-			west: southwest.longitude,
-		})
-	}
+    /**
+     * Expand a bounding box by a given number of meters
+     */
 
-	private static expandBoundingBox(
-		northeast: Coordinates,
-		southwest: Coordinates,
-		meters: number,
-	): { northeast: Coordinates; southwest: Coordinates } {
-		const originalBbox = bboxPolygon([
-			southwest.longitude,
-			southwest.latitude,
-			northeast.longitude,
-			northeast.latitude,
-		])
+    static expandBoundingBox(
+        northeast: Coordinates,
+        southwest: Coordinates,
+        expand_by_meters: number
+    ): { northeast: Coordinates; southwest: Coordinates } {
+        const _bboxPolygon = bboxPolygon([
+            southwest.longitude,
+            southwest.latitude,
+            northeast.longitude,
+            northeast.latitude,
+        ]);
 
-		// Buffer the bounding box
-		const bufferedBbox = buffer(originalBbox, meters / 1000, { units: 'kilometers' }) // Convert meters to kilometers for buffer
+        const buffered = buffer(_bboxPolygon, expand_by_meters, {
+            units: 'meters',
+        });
 
-		// Get the bounding box of the bufferedBbox to determine its extents
-		const bufferedBboxExtent = bbox(bufferedBbox)
+        if (!buffered) {
+            throw new Error('Could not expand bounding box');
+        }
 
-		// Extract the new northeast and southwest coordinates from the buffered bounding box
-		const newNortheast: Coordinates = {
-			latitude: bufferedBboxExtent[3], // North
-			longitude: bufferedBboxExtent[2], // East
-		}
+        const newBoundingBox = bbox(buffered) as [number, number, number, number];
 
-		const newSouthwest: Coordinates = {
-			latitude: bufferedBboxExtent[1], // South
-			longitude: bufferedBboxExtent[0], // West
-		}
+        return {
+            northeast: {
+                latitude: newBoundingBox[3],
+                longitude: newBoundingBox[2],
+            },
+            southwest: {
+                latitude: newBoundingBox[1],
+                longitude: newBoundingBox[0],
+            },
+        };
+    }
 
-		return { northeast: newNortheast, southwest: newSouthwest }
-	}
+    /**
+     * Get the distance between two points in meters
+     */
 
-	//This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
-	static distanceBetweenTwoPoints(pointA: Coordinates, pointB: Coordinates): number {
-		// Convert your coordinates to turf Point format
-		const turfPointA = point([pointA.longitude, pointA.latitude])
-		const turfPointB = point([pointB.longitude, pointB.latitude])
+    static getDistance(from: Coordinates, to: Coordinates): number {
+        const from_point = point([from.longitude, from.latitude]);
+        const to_point = point([to.longitude, to.latitude]);
+        return distance(from_point, to_point, { units: 'meters' });
+    }
 
-		// Calculate distance using turf's distance function (this will be in kilometers by default)
-		const _distance = distance(turfPointA, turfPointB)
+    /**
+     * Get the center point of a bounding box
+     */
 
-		return _distance // Returns the distance in kilometers
-	}
+    static getBoundingBoxCenter(northeast: Coordinates, southwest: Coordinates): Coordinates {
+        return {
+            latitude: (northeast.latitude + southwest.latitude) / 2,
+            longitude: (northeast.longitude + southwest.longitude) / 2,
+        };
+    }
+
+    static getDistanceBetweenTwoPoints(point1: Coordinates, point2: Coordinates): number {
+        const from = point([point1.longitude, point1.latitude]);
+        const to = point([point2.longitude, point2.latitude]);
+        const options = { units: 'kilometers' as const };
+        return distance(from, to, options);
+    }
 }

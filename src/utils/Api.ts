@@ -1,186 +1,251 @@
-import axios, { RawAxiosRequestConfig } from 'axios'
-import { Logger } from './Logger'
+import axios, { AxiosError, InternalAxiosRequestConfig, RawAxiosRequestConfig } from 'axios';
 
-const logger = new Logger()
+import { Logger } from './Logger';
+
+const logger = new Logger();
 
 export class Api {
-	/**
-	 * Performs the get command when expecting an object response
-	 *
-	 * @param {string} domain
-	 * @param {string} url
-	 * @param {RawAxiosRequestConfig} [config]
-	 * @param {string} [uuid]
-	 * @param {any} [interceptor]
-	 * @return object
-	 */
+    /**
+     * Performs the get command when expecting an object response
+     *
+     * @param {string} domain
+     * @param {string} url
+     * @param {RawAxiosRequestConfig} [config]
+     * @param {string} [uuid]
+     * @param {any} [interceptor]
+     * @return object
+     */
 
-	async get(domain: string, url: string, config?: any, uuid?: string, interceptor?: any): Promise<any | boolean> {
-		if (!config) {
-			config = this.defaultConfig()
-		}
+    async get<T>(
+        domain: string,
+        url: string,
+        config?: RawAxiosRequestConfig,
+        uuid?: string,
+        interceptor?: (
+            value: InternalAxiosRequestConfig
+        ) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
+    ): Promise<T> {
+        config ??= this.defaultConfig();
 
-		try {
-			logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (GET): ${url}`)
+        try {
+            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (GET): ${url}`);
 
-			let response
+            let response;
+            if (interceptor) {
+                const client = axios.create();
+                client.interceptors.request.use(interceptor);
+                response = await client.get<T>(url, config);
+            } else {
+                response = await axios.get<T>(url, config);
+            }
 
-			if (interceptor) {
-				const client = axios.create()
-				client.interceptors.request.use(interceptor)
-				response = await client.get(url, config)
-			} else {
-				response = await axios.get(url, config)
-			}
+            logger.debug(
+                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()} length=${(
+                    response.data as unknown[]
+                ).length.toString()}`
+            );
+            logger.verbose(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Response data`, response.data);
 
-			logger.debug(
-				`[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status} length=${
-					response.data?.length || 0
-				}`,
-			)
-			logger.verbose(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Response data`, response.data)
+            return response.data;
+        } catch (e) {
+            return this.processError(e, 'GET', url, domain, config, undefined, uuid);
+        }
+    }
 
-			return response.data
-		} catch (e) {
-			return this.processError(e, 'GET', url, domain, config, undefined, uuid)
-		}
-	}
+    /**
+     * Performs the post command when expecting an object response
+     *
+     * @param {string} domain
+     * @param {string} url
+     * @param {object} [data]
+     * @param {RawAxiosRequestConfig} [config]
+     * @param {string} [uuid]
+     * @return object
+     */
 
-	/**
-	 * Performs the post command when expecting an object response
-	 *
-	 * @param {string} domain
-	 * @param {string} url
-	 * @param {object} [data]
-	 * @param {RawAxiosRequestConfig} [config]
-	 * @param {string} [uuid]
-	 * @return object
-	 */
+    async post<T>(
+        domain: string,
+        url: string,
+        data?: object,
+        config?: RawAxiosRequestConfig,
+        uuid?: string
+    ): Promise<T> {
+        config ??= this.defaultConfig();
 
-	async post(domain: string, url: string, data?: object, config?: any, uuid?: string): Promise<any | boolean> {
-		if (!config) {
-			config = this.defaultConfig()
-		}
+        try {
+            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Request (POST): ${url}`, data);
+            const response = await axios.post<T>(url, data, config);
+            logger.debug(
+                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()}`,
+                response.data
+            );
+            return response.data;
+        } catch (e) {
+            return this.processError(e, 'POST', url, domain, config, data, uuid);
+        }
+    }
 
-		try {
-			logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Request (POST): ${url}`, data)
-			const response = await axios.post(url, data, config)
-			logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status}`, response.data)
-			return response.data
-		} catch (e) {
-			return this.processError(e, 'POST', url, domain, config, data, uuid)
-		}
-	}
+    /**
+     * Performs the patch command when expecting an object response
+     *
+     * @param {string} domain
+     * @param {string} url
+     * @param {object} [data]
+     * @param {RawAxiosRequestConfig} [config]
+     * @param {string} [uuid]
+     * @return object
+     */
 
-	/**
-	 * Performs the patch command when expecting an object response
-	 *
-	 * @param {string} domain
-	 * @param {string} url
-	 * @param {object} [data]
-	 * @param {RawAxiosRequestConfig} [config]
-	 * @param {string} [uuid]
-	 * @return object
-	 */
+    async patch<T>(
+        domain: string,
+        url: string,
+        data?: object,
+        config?: RawAxiosRequestConfig,
+        uuid?: string
+    ): Promise<T> {
+        config ??= this.defaultConfig();
 
-	async patch(domain: string, url: string, data?: object, config?: any, uuid?: string): Promise<any | boolean> {
-		if (!config) {
-			config = this.defaultConfig()
-		}
+        try {
+            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (PATCH): ${url}`, data);
+            const response = await axios.patch<T>(url, data, config);
+            logger.debug(
+                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()}`,
+                response.data
+            );
+            return response.data;
+        } catch (e) {
+            return this.processError(e, 'PATCH', url, domain, config, data, uuid);
+        }
+    }
 
-		try {
-			logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (PATCH): ${url}`, data)
-			const response = await axios.patch(url, data, config)
-			logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status}`, response.data)
-			return response.data
-		} catch (e) {
-			return this.processError(e, 'PATCH', url, domain, config, data, uuid)
-		}
-	}
+    /**
+     * Performs the put command when expecting an object response
+     *
+     * @param {string} domain
+     * @param {string} url
+     * @param {object} [data]
+     * @param {RawAxiosRequestConfig} [config]
+     * @param {string} [uuid]
+     * @return object
+     */
 
-	/**
-	 * Performs the put command when expecting an object response
-	 *
-	 * @param {string} domain
-	 * @param {string} url
-	 * @param {object} [data]
-	 * @param {RawAxiosRequestConfig} [config]
-	 * @param {string} [uuid]
-	 * @return object
-	 */
+    async put<T>(
+        domain: string,
+        url: string,
+        data?: object,
+        config?: RawAxiosRequestConfig,
+        uuid?: string
+    ): Promise<T> {
+        config ??= this.defaultConfig();
+        try {
+            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (PUT): ${url}`, data);
+            const response = await axios.put<T>(url, data, config);
+            logger.debug(
+                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()}`,
+                response.data
+            );
+            return response.data;
+        } catch (e) {
+            return this.processError(e, 'PUT', url, domain, config, data, uuid);
+        }
+    }
 
-	async put(domain: string, url: string, data?: object, config?: any, uuid?: string): Promise<any | boolean> {
-		if (!config) {
-			config = this.defaultConfig()
-		}
-		try {
-			logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (PUT): ${url}`, data)
-			const response = await axios.put(url, data, config)
-			logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status}`, response.data)
-			return response.data
-		} catch (e) {
-			return this.processError(e, 'PUT', url, domain, config, data, uuid)
-		}
-	}
+    /**
+     * Performs the get command when expecting an object response
+     *
+     * @param {string} domain
+     * @param {string} url
+     * @param {RawAxiosRequestConfig} [config]
+     * @param {string} [uuid]
+     * @return object
+     */
 
-	/**
-	 * Performs the get command when expecting an object response
-	 *
-	 * @param {string} domain
-	 * @param {string} url
-	 * @param {RawAxiosRequestConfig} [config]
-	 * @param {string} [uuid]
-	 * @return object
-	 */
+    async delete(domain: string, url: string, config?: RawAxiosRequestConfig, uuid?: string): Promise<boolean> {
+        config ??= this.defaultConfig();
 
-	async delete(domain: string, url: string, config?: any, uuid?: string): Promise<boolean> {
-		if (!config) {
-			config = this.defaultConfig()
-		}
+        try {
+            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (DELETE): ${url}`);
+            const response = await axios.delete(url, config);
+            logger.debug(
+                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()}`,
+                response.data
+            );
+            return true;
+        } catch (e) {
+            this.processError(e, 'DELETE', url, domain, config, undefined, uuid);
+            return false;
+        }
+    }
 
-		try {
-			logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (DELETE): ${url}`)
-			const response = await axios.delete(url, config)
-			logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status}`, response.data)
-			return true
-		} catch (e) {
-			return this.processError(e, 'DELETE', url, domain, config, undefined, uuid)
-		}
-	}
+    defaultConfig(): RawAxiosRequestConfig {
+        return {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept-Encoding': 'application/json',
+            },
+        };
+    }
 
-	defaultConfig(): RawAxiosRequestConfig {
-		return {
-			headers: {
-				'Content-Type': 'application/json',
-				'Accept-Encoding': 'application/json',
-			},
-		}
-	}
+    processError(
+        e: unknown,
+        method: string,
+        url: string,
+        domain?: string,
+        config?: RawAxiosRequestConfig,
+        data?: object,
+        uuid?: string
+    ): never {
+        let message;
+        const debug: {
+            request: {
+                method: string;
+                url: string;
+                config: RawAxiosRequestConfig | null;
+                data: object | null;
+            };
+            response?: {
+                status?: number;
+                data?: unknown;
+            };
+            error: {
+                status?: number;
+                message: string;
+                stack?: string;
+            };
+        } = {
+            request: {
+                method: method,
+                url: url,
+                config: config ?? null,
+                data: data ?? null,
+            },
+            error: {
+                message: '',
+            },
+        };
 
-	processError(e: any, method: string, url: string, domain?: string, config?: any, data?: object, uuid?: string) {
-		const message = `[${domain}]${uuid ? '[' + uuid + ']' : ''} Error (${
-			e.response && e.response.status ? e.response.status : null
-		}): ${e.message}`
-		const debug = {
-			request: {
-				method: method,
-				url: url,
-				config: config ?? null,
-				data: data ?? null,
-			},
-			response: e.response
-				? {
-						status: e.response.status,
-						data: e.response.data,
-					}
-				: null,
-			error: {
-				status: e.status,
-				message: e.message,
-				stack: e.stack,
-			},
-		}
-		logger.warn(message, debug)
-		return false
-	}
+        if (axios.isAxiosError(e)) {
+            const axiosError = e as AxiosError;
+            message = `[${domain ?? ''}]${uuid ? '[' + uuid + ']' : ''} Error (${
+                axiosError.response?.status.toString() ?? 'Unknown'
+            }): ${axiosError.message}`;
+            debug.response = {
+                status: axiosError.response?.status,
+                data: axiosError.response?.data,
+            };
+            debug.error.status = axiosError.status;
+            debug.error.message = axiosError.message;
+            debug.error.stack = axiosError.stack;
+        } else if (e instanceof Error) {
+            message = `[${domain ?? ''}]${uuid ? '[' + uuid + ']' : ''} Error: ${e.message}`;
+            debug.error.message = e.message;
+            debug.error.stack = e.stack;
+        } else {
+            message = `[${domain ?? ''}]${uuid ? '[' + uuid + ']' : ''} An unknown error occurred`;
+            debug.error.message = 'An unknown error occurred';
+        }
+
+        logger.warn(message, debug);
+        throw new Error(message);
+    }
 }
