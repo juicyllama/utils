@@ -40,7 +40,7 @@ jobs:
 
             -   name: 'Install dependencies'
                 run: npm install
-
+                
             -   run: git stash
             -   run: git pull --force
 
@@ -57,9 +57,6 @@ jobs:
                     patch-wording: 'patch,fixes,fix,misc,docs,refactor,style,test,build,ci,chore,revert,perf'    # Providing patch-wording will override commits
                     commit-message: 'Release Package: Bump Version [skip ci]'
                     skip-tag: true
-
-            -   name: 'Restore git hooks'
-                run: git config --unset core.hooksPath
 
             -  name: 'Build'
                run: npm run build
