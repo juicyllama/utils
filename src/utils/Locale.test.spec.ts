@@ -1,8 +1,15 @@
-/**
- * @jest-environment jsdom
- */
-
 import { Locale } from './Locale';
+
+// Mock window.navigator for testing in Node.js environment
+Object.defineProperty(global, 'window', {
+    value: {
+        navigator: {
+            language: 'en-US',
+            languages: ['en-US', 'en'],
+        },
+    },
+    writable: true,
+});
 
 describe('GetLocale', () => {
     it('Make sure we can get a locale', async () => {

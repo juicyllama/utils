@@ -1,31 +1,17 @@
 // Jest setup file to handle cleanup of HTTP connections
-const axios = require('axios');
-
-// Clean up axios instances after each test
-afterEach(async () => {
-    // Force garbage collection of any pending requests
-    if (global.gc) {
-        global.gc();
-    }
-});
-
-// Global teardown to ensure all HTTP connections are closed
 afterAll(async () => {
-    // Close any remaining HTTP agents
-    if (axios.defaults.adapter) {
-        // Wait a bit for any pending connections to close
-        await new Promise(resolve => setTimeout(resolve, 100));
-    }
+    // Wait a short time for any pending HTTP requests to complete
+    await new Promise(resolve => setTimeout(resolve, 100));
     
-    // Force close any remaining HTTP agents
+    // Clean up HTTP/HTTPS global agents to prevent open handles
     const http = require('http');
     const https = require('https');
     
-    // Destroy any global agents
-    if (http.globalAgent) {
+    // Destroy global agents to close any keep-alive connections
+    if (http.globalAgent && typeof http.globalAgent.destroy === 'function') {
         http.globalAgent.destroy();
     }
-    if (https.globalAgent) {
+    if (https.globalAgent && typeof https.globalAgent.destroy === 'function') {
         https.globalAgent.destroy();
     }
 });

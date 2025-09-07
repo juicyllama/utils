@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { Coordinates, BoundingBox, Geocoding } from './Geocoding';
 
 describe('areCoordinatesInBoundingBox', () => {
