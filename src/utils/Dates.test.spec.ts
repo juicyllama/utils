@@ -1,6 +1,14 @@
 import { Dates } from './Dates'
 
 describe('Dates', () => {
+    describe('Now', () => {
+        it('Now', () => {
+            const now = Dates.now()
+            expect(now).toBeInstanceOf(Date)
+            expect(now.getTime()).toBeLessThanOrEqual(Date.now())
+        })
+    })
+
     describe('Format', () => {
         it('YYYY-MM-DD', () => {
             const format = Dates.format(new Date('2020-01-01'), 'YYYY-MM-DD')

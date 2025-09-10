@@ -16,6 +16,10 @@ const nth = function (d: number) {
 }
 
 export class Dates {
+    static now(): Date {
+        return new Date()
+    }
+
     static format(date: Date, format: string): string {
         if (format === 'iso') return date.toISOString()
 
@@ -49,8 +53,8 @@ export class Dates {
                 milliseconds.length === 1
                     ? '00' + milliseconds
                     : milliseconds.length === 2
-                      ? '0' + milliseconds
-                      : milliseconds
+                    ? '0' + milliseconds
+                    : milliseconds
             )
     }
 
