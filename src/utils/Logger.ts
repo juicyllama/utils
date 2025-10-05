@@ -7,60 +7,65 @@ export class Logger {
         this.verbose(`[${key}]=>${JSON.stringify(value)}`)
     }
 
-    error(message: string, ...optionalParams: unknown[]): void {
+    error(message: unknown, ...optionalParams: unknown[]): void {
         let colored = `\x1b[31m`
+        let messageStr = typeof message === 'string' ? message : String(message)
         if (optionalParams.length > 0) {
-            message = this.processParams(message, optionalParams)
+            messageStr = this.processParams(messageStr, optionalParams)
         }
-        colored += `${message}\x1b[0m`
+        colored += `${messageStr}\x1b[0m`
 
         if (this.getLogLevel() <= 5) {
             console.error(colored)
         }
     }
 
-    warn(message: string, ...optionalParams: unknown[]): void {
+    warn(message: unknown, ...optionalParams: unknown[]): void {
         let colored = `\x1b[33m`
+        let messageStr = typeof message === 'string' ? message : String(message)
         if (optionalParams.length > 0) {
-            message = this.processParams(message, optionalParams)
+            messageStr = this.processParams(messageStr, optionalParams)
         }
-        colored += `${message}\x1b[0m`
+        colored += `${messageStr}\x1b[0m`
 
         if (this.getLogLevel() <= 4) {
             console.warn(colored)
         }
     }
 
-    log(message: string, ...optionalParams: unknown[]): void {
+    log(message: unknown, ...optionalParams: unknown[]): void {
         let colored = `\x1b[32m`
+        let messageStr = typeof message === 'string' ? message : String(message)
         if (optionalParams.length > 0) {
-            message = this.processParams(message, optionalParams)
+            messageStr = this.processParams(messageStr, optionalParams)
         }
-        colored += `${message}\x1b[0m`
+        colored += `${messageStr}\x1b[0m`
 
         if (this.getLogLevel() <= 3) {
             console.log(colored)
         }
     }
 
-    debug(message: string, ...optionalParams: unknown[]): void {
+    debug(message: unknown, ...optionalParams: unknown[]): void {
         let colored = `\x1b[35m`
+        let messageStr = typeof message === 'string' ? message : String(message)
         if (optionalParams.length > 0) {
-            message = this.processParams(message, optionalParams)
+            messageStr = this.processParams(messageStr, optionalParams)
         }
-        colored += `${message}\x1b[0m`
+        colored += `${messageStr}\x1b[0m`
 
         if (this.getLogLevel() <= 2) {
             console.debug(colored)
         }
     }
 
-    verbose(message: string, ...optionalParams: unknown[]): void {
+    verbose(message: unknown, ...optionalParams: unknown[]): void {
         let colored = `\x1b[36m`
+        let messageStr = typeof message === 'string' ? message : String(message)
         if (optionalParams.length > 0) {
-            message = this.processParams(message, optionalParams)
+            messageStr = this.processParams(messageStr, optionalParams)
         }
-        colored += `${message}\x1b[0m`
+        colored += `${messageStr}\x1b[0m`
 
         if (this.getLogLevel() <= 1) {
             console.debug(colored)
