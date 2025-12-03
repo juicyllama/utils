@@ -141,7 +141,11 @@ export class Logger {
             return
         }
 
-        console.log(output, opts?.params)
+        if (opts?.params === undefined) {
+            console.log(output)
+        } else {
+            console.log(output, opts.params)
+        }
 
         if (process.env.GRAFANA_BEARER_TOKEN && process.env.GRAFANA_SERVICE_NAME) {
             // Send logs to Grafana
