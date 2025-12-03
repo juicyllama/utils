@@ -5,6 +5,7 @@ export enum StatsMethods {
 }
 
 export enum StepType {
+    MINUTES = 'MINUTES',
     HOURS = 'HOURS',
     DAYS = 'DAYS',
     WEEKS = 'WEEKS',

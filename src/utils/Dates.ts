@@ -66,8 +66,8 @@ export class Dates {
                 milliseconds.length === 1
                     ? '00' + milliseconds
                     : milliseconds.length === 2
-                      ? '0' + milliseconds
-                      : milliseconds
+                    ? '0' + milliseconds
+                    : milliseconds
             )
     }
 
@@ -75,12 +75,6 @@ export class Dates {
         let day = date.getDay() - 1
         if (day === -1) day = 6
         return DayNames[day]
-    }
-
-    private static formatZerolessValue(value: number): string {
-        if (value < 10) return `0${value.toString()}`
-
-        return String(value)
     }
 
     /**
@@ -152,6 +146,10 @@ export class Dates {
         steps ??= 1
 
         switch (step) {
+            case StepType.MINUTES:
+                date.setMinutes(date.getMinutes() + steps)
+                return date
+
             case StepType.HOURS:
                 date.setHours(date.getHours() + steps)
                 return date
