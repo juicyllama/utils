@@ -2,8 +2,6 @@ import axios, { AxiosError, InternalAxiosRequestConfig, RawAxiosRequestConfig } 
 
 import { Logger } from './Logger'
 
-const logger = new Logger()
-
 export class Api {
     /**
      * Performs the get command when expecting an object response
@@ -27,8 +25,14 @@ export class Api {
     ): Promise<T> {
         config ??= this.defaultConfig()
 
+        const logger = new Logger(['@juicyllama/utils', 'Api'])
+        const context = ['GET', domain]
+        if (uuid) context.push(uuid)
+
         try {
-            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (GET): ${url}`)
+            logger.debug(`Request: ${url}`, {
+                context: context,
+            })
 
             let response
             if (interceptor) {
@@ -40,10 +44,10 @@ export class Api {
             }
 
             const responseLength = Array.isArray(response.data) ? response.data.length : 1
-            logger.debug(
-                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()} length=${responseLength.toString()}`
-            )
-            logger.verbose(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Response data`, response.data)
+            logger.debug(`Response ${response.status.toString()} length=${responseLength.toString()}`, {
+                context: context,
+                params: response.data,
+            })
 
             return response.data
         } catch (e) {
@@ -67,17 +71,29 @@ export class Api {
         url: string,
         data?: object,
         config?: RawAxiosRequestConfig,
-        uuid?: string
+        uuid?: string,
+        skipDebugLog?: boolean
     ): Promise<T> {
         config ??= this.defaultConfig()
 
+        const logger = new Logger(['@juicyllama/utils', 'Api'])
+        const context = ['POST', domain]
+        if (uuid) context.push(uuid)
+
         try {
-            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''} Request (POST): ${url}`, data)
+            if (!skipDebugLog) {
+                logger.debug(`Request: ${url}`, {
+                    context: context,
+                    params: data,
+                })
+            }
             const response = await axios.post<T>(url, data, config)
-            logger.debug(
-                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()}`,
-                response.data
-            )
+            if (!skipDebugLog) {
+                logger.debug(`Response ${response.status.toString()}`, {
+                    context: context,
+                    params: response.data,
+                })
+            }
             return response.data
         } catch (e) {
             return this.processError(e, 'POST', url, domain, config, data, uuid)
@@ -104,13 +120,20 @@ export class Api {
     ): Promise<T> {
         config ??= this.defaultConfig()
 
+        const logger = new Logger(['@juicyllama/utils', 'Api'])
+        const context = ['PATCH', domain]
+        if (uuid) context.push(uuid)
+
         try {
-            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (PATCH): ${url}`, data)
+            logger.debug(`Request: ${url}`, {
+                context: context,
+                params: data,
+            })
             const response = await axios.patch<T>(url, data, config)
-            logger.debug(
-                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()}`,
-                response.data
-            )
+            logger.debug(`Response ${response.status.toString()}`, {
+                context: context,
+                params: response.data,
+            })
             return response.data
         } catch (e) {
             return this.processError(e, 'PATCH', url, domain, config, data, uuid)
@@ -136,13 +159,21 @@ export class Api {
         uuid?: string
     ): Promise<T> {
         config ??= this.defaultConfig()
+
+        const logger = new Logger(['@juicyllama/utils', 'Api'])
+        const context = ['PUT', domain]
+        if (uuid) context.push(uuid)
+
         try {
-            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (PUT): ${url}`, data)
+            logger.debug(`Request: ${url}`, {
+                context: context,
+                params: data,
+            })
             const response = await axios.put<T>(url, data, config)
-            logger.debug(
-                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()}`,
-                response.data
-            )
+            logger.debug(`Response ${response.status.toString()}`, {
+                context: context,
+                params: response.data,
+            })
             return response.data
         } catch (e) {
             return this.processError(e, 'PUT', url, domain, config, data, uuid)
@@ -162,17 +193,22 @@ export class Api {
     async delete(domain: string, url: string, config?: RawAxiosRequestConfig, uuid?: string): Promise<boolean> {
         config ??= this.defaultConfig()
 
+        const logger = new Logger(['@juicyllama/utils', 'Api'])
+        const context = ['DELETE', domain]
+        if (uuid) context.push(uuid)
+
         try {
-            logger.debug(`[${domain}]${uuid ? '[' + uuid + ']' : ''}} Request (DELETE): ${url}`)
+            logger.debug(`Request: ${url}`, {
+                context: context,
+            })
             const response = await axios.delete(url, config)
-            logger.debug(
-                `[${domain}]${uuid ? '[' + uuid + ']' : ''} Response ${response.status.toString()}`,
-                response.data
-            )
+            logger.debug(`Response ${response.status.toString()}`, {
+                context: context,
+                params: response.data,
+            })
             return true
         } catch (e) {
             this.processError(e, 'DELETE', url, domain, config, undefined, uuid)
-            return false
         }
     }
 
@@ -194,6 +230,8 @@ export class Api {
         data?: object,
         uuid?: string
     ): never {
+        const logger = new Logger(['@juicyllama/utils', 'Api'])
+
         let message
         const debug: {
             request: {
@@ -244,7 +282,7 @@ export class Api {
             debug.error.message = 'An unknown error occurred'
         }
 
-        logger.warn(message, debug)
+        logger.warn(message, { params: debug })
         throw new Error(message)
     }
 }

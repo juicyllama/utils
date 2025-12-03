@@ -20,6 +20,19 @@ export class Dates {
         return new Date()
     }
 
+    static utc(): Date {
+        const now = new Date()
+        return new Date(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate(),
+            now.getUTCHours(),
+            now.getUTCMinutes(),
+            now.getUTCSeconds(),
+            now.getUTCMilliseconds()
+        )
+    }
+
     static format(date: Date, format: string): string {
         if (format === 'iso') return date.toISOString()
 
@@ -53,8 +66,8 @@ export class Dates {
                 milliseconds.length === 1
                     ? '00' + milliseconds
                     : milliseconds.length === 2
-                    ? '0' + milliseconds
-                    : milliseconds
+                      ? '0' + milliseconds
+                      : milliseconds
             )
     }
 

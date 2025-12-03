@@ -11,3 +11,4 @@ coverage/
 *.bak
 npm-debug.log*
 yarn-debug.log*
+tsconfig.tsbuildinfo

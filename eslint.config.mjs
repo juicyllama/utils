@@ -54,6 +54,7 @@ export default tseslint.config(
             '@typescript-eslint/no-unsafe-return': 'off', // Relaxed for certain utility functions
             '@typescript-eslint/no-implied-eval': 'off', // Sometimes used in dynamic code
             '@typescript-eslint/prefer-promise-reject-errors': 'off', // Allow non-Error rejections in some cases
+            '@typescript-eslint/no-floating-promises': 'off', // Relaxed for certain async utilities
             // Disabled because we use Prettier with @trivago/prettier-plugin-sort-imports
             'import/order': 'off',
 		},

@@ -16,8 +16,13 @@ export class Languages {
         try {
             return LANGUAGES.find(language => language.code === ISO2.toLowerCase()) as Language
         } catch (e: unknown) {
-            const logger = new Logger()
-            logger.error(`[Utils::Languages::getLanguage] ${(e as Error).message}`, (e as Error).stack)
+            const logger = new Logger(['@juicyllama/utils', 'Languages'])
+            logger.error((e as Error).message, {
+                context: ['getLanguage', ISO2],
+                params: {
+                    error: e,
+                },
+            })
             return
         }
     }

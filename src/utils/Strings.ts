@@ -15,12 +15,20 @@ export class Strings {
 
             return str.charAt(0).toUpperCase() + str.slice(1)
         } catch (e: unknown) {
-            const logger = new Logger()
-            logger.warn(`[Utils::Strings::capitalize] ${e instanceof Error ? e.message : String(e)}`, {
-                str: str,
+            const logger = new Logger(['@juicyllama/utils', 'Strings'])
+            logger.warn(e instanceof Error ? e.message : String(e), {
+                context: 'capitalize',
+                params: {
+                    str,
+                },
             })
             if (e instanceof Error) {
-                logger.warn(`[Utils::Strings::capitalize] Stack Trace`, e.stack)
+                logger.warn(`Stack Trace`, {
+                    context: 'capitalize',
+                    params: {
+                        stack: e.stack,
+                    },
+                })
             }
             return ''
         }

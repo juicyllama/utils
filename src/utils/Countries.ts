@@ -267,8 +267,13 @@ export class Countries {
         try {
             return ISO2toISO3[iso2]
         } catch (e: unknown) {
-            const logger = new Logger()
-            logger.error(`[Utils::Countries::convertISO2ToISO3] ${(e as Error).message}`, (e as Error).stack)
+            const logger = new Logger(['@juicyllama/utils', 'Countries'])
+            logger.error((e as Error).message, {
+                context: ['convertISO2ToISO3', iso2],
+                params: {
+                    error: e,
+                },
+            })
             return null
         }
     }
@@ -286,8 +291,13 @@ export class Countries {
             )
             return foundCountry ? foundCountry.ISO2 : null
         } catch (e: unknown) {
-            const logger = new Logger()
-            logger.error(`[Utils::Countries::countryNameToISO2] ${(e as Error).message}`, (e as Error).stack)
+            const logger = new Logger(['@juicyllama/utils', 'Countries'])
+            logger.error((e as Error).message, {
+                context: ['countryNameToISO2', countryName],
+                params: {
+                    error: e,
+                },
+            })
             return null
         }
     }
@@ -303,8 +313,13 @@ export class Countries {
         try {
             return COUNTRIES.find(country => country.ISO2 === ISO2.toUpperCase()) as Country
         } catch (e: unknown) {
-            const logger = new Logger()
-            logger.error(`[Utils::Countries::getCountry] ${(e as Error).message}`, (e as Error).stack)
+            const logger = new Logger(['@juicyllama/utils', 'Countries'])
+            logger.error((e as Error).message, {
+                context: ['getCountry', ISO2],
+                params: {
+                    error: e,
+                },
+            })
             return
         }
     }

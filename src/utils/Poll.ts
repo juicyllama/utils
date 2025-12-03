@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 
 import { Logger } from './Logger'
 
-const logger = new Logger()
+const logger = new Logger(['@juicyllama/utils', 'Poll'])
 
 export class Poll {
     /**
@@ -27,32 +27,47 @@ export class Poll {
         domain?: string,
         uuid?: string
     ): Promise<T> {
-        domain ??= 'common::poll::url'
+        const context = ['url']
+        if (domain) context.push(domain)
+        if (uuid) context.push(uuid)
 
         const poll = () => {
             let attempts = 0
             const executePoll = async (resolve: (value: T) => void, reject: (reason?: string) => void) => {
-                logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}: ${url}`)
+                logger.debug(`#${String(attempts + 1)}`, {
+                    context: context,
+                    params: {
+                        url,
+                        interval: `${String(interval)}ms`,
+                        max_attempts: max_attempts,
+                        attempt: attempts + 1,
+                    },
+                })
                 let result
 
                 try {
                     result = await axios.get(url, config)
                 } catch (e: unknown) {
                     const error = e as Error // Type assertion to specify the type of 'e' as 'Error'
-                    logger.warn(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL Error: ${error.message}`, {
-                        error: {
-                            message: error.message,
-                            stack: error.stack,
+                    logger.warn(`Error: ${error.message}`, {
+                        context: context,
+                        params: {
+                            error: {
+                                message: error.message,
+                                stack: error.stack,
+                            },
                         },
                     })
                 }
 
-                logger.debug(
-                    `[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}: Response (${String(
-                        result?.status
-                    )})`,
-                    result?.data
-                )
+                logger.debug(`#${String(attempts + 1)}: Response (${String(result?.status)})`, {
+                    context: context,
+                    params: {
+                        attempt: attempts + 1,
+                        result: result?.data,
+                        validate: validate.toString(),
+                    },
+                })
                 attempts++
 
                 if (validate(result?.data as T)) {
@@ -97,17 +112,20 @@ export class Poll {
         domain?: string,
         uuid?: string
     ): Promise<T> {
-        domain ??= 'common::poll::function'
+        const context = ['function']
+        if (domain) context.push(domain)
+        if (uuid) context.push(uuid)
 
         const poll = () => {
             let attempts = 0
             const executePoll = async (resolve: (value: T) => void, reject: (reason?: string) => void) => {
-                logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}`, {
-                    func: func.toString(),
-                    interval: `${String(interval)}ms`,
-                    max_attempts: max_attempts,
-                    domain: domain,
-                    uuid: uuid,
+                logger.debug(`#${String(attempts + 1)}`, {
+                    context: context,
+                    params: {
+                        func: func.toString(),
+                        interval: `${String(interval)}ms`,
+                        max_attempts: max_attempts,
+                    },
                 })
 
                 let result
@@ -116,17 +134,23 @@ export class Poll {
                     result = await func()
                 } catch (e: unknown) {
                     const error = e as Error // Type assertion to specify the type of 'e' as 'Error'
-                    logger.warn(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL Error: ${error.message}`, {
-                        error: {
-                            message: error.message,
-                            stack: error.stack,
+                    logger.warn(`POLL Error: ${error.message}`, {
+                        context: context,
+                        params: {
+                            error: {
+                                message: error.message,
+                                stack: error.stack,
+                            },
                         },
                     })
                 }
 
-                logger.debug(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL #${String(attempts + 1)}: Response`, {
-                    result: result,
-                    validate: validate.toString(),
+                logger.debug(`POLL #${String(attempts + 1)}: Response`, {
+                    context: context,
+                    params: {
+                        result: result,
+                        validate: validate.toString(),
+                    },
                 })
 
                 attempts++
@@ -150,10 +174,13 @@ export class Poll {
             })
             .catch((e: unknown) => {
                 const error = e as Error
-                logger.warn(`[${domain}]${uuid ? `[${uuid}]` : ''}} POLL Error: ${error.message}`, {
-                    error: {
-                        message: error.message,
-                        stack: error.stack,
+                logger.warn(`POLL Error: ${error.message}`, {
+                    context: context,
+                    params: {
+                        error: {
+                            message: error.message,
+                            stack: error.stack,
+                        },
                     },
                 })
                 throw new Error(error.message)

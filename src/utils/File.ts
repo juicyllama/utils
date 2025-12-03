@@ -8,7 +8,7 @@ import * as mimetypes from '../assets/mimetypes.json'
 import { Logger } from './Logger'
 import { Random } from './Random'
 
-const logger = new Logger()
+const logger = new Logger(['@juicyllama/utils', 'File'])
 
 export class File {
     /**
@@ -26,10 +26,13 @@ export class File {
                 void fs.promises.unlink(filePath)
             }
         } catch (e: unknown) {
-            logger.warn(`[@juicyllama/utils::File::unlink] ${(e as Error).message}`, {
-                filePath: filePath,
-                dirPath: dirPath,
-                e: e,
+            logger.warn((e as Error).message, {
+                context: ['unlink'],
+                params: {
+                    filePath: filePath,
+                    dirPath: dirPath,
+                    error: e,
+                },
             })
         }
     }
