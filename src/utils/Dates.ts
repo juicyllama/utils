@@ -338,6 +338,47 @@ export class Dates {
         return `${Math.floor(seconds).toString()} seconds ago`
     }
 
+    static diff(date1: Date, date2: Date, decimals = 2): string {
+        const seconds = Math.floor(Math.abs(new Date(date1).getTime() - new Date(date2).getTime()) / 1000)
+
+        let interval = Math.floor(seconds / 31536000)
+
+        if (interval >= 1) {
+            if (interval === 1) return '1 year'
+            return `${interval.toString()} years`
+        }
+
+        interval = Math.floor(seconds / 2592000)
+        if (interval >= 1) {
+            if (interval === 1) return '1 month'
+            return `${interval.toString()} months`
+        }
+
+        interval = Math.floor(seconds / 86400)
+        if (interval >= 1) {
+            if (interval === 1) return '1 day'
+            return `${interval.toString()} days`
+        }
+
+        interval = Math.floor(seconds / 3600)
+        if (interval >= 1) {
+            if (interval === 1) return '1 hour'
+            return `${(seconds / 3600).toFixed(decimals)} hours`
+        }
+
+        interval = Math.floor(seconds / 60)
+        if (interval >= 1) {
+            if (interval === 1) return '1 minute'
+            return `${(seconds / 60).toFixed(decimals)} minutes`
+        }
+
+        if (seconds <= 1) {
+            return '1 second'
+        }
+
+        return `${Math.floor(seconds).toString()} seconds`
+    }
+
     static minutesAgo(minutes: number): Date {
         return new Date(new Date().getTime() - minutes * 60000) // minutes * 60 seconds * 1000 milliseconds
     }

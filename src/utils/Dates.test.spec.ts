@@ -89,4 +89,41 @@ describe('Dates', () => {
             expect(ahead).toEqual('2.50 hours')
         })
     })
+
+    describe('Diff', () => {
+        it('0.25 seconds', () => {
+            const start = new Date('2020-01-01T00:00:00.000Z')
+            const end = new Date('2020-01-01T00:00:00.250Z')
+            const diff = Dates.diff(start, end)
+            expect(diff).toEqual('1 second')
+        })
+
+        it('30 seconds', () => {
+            const start = new Date('2020-01-01T00:00:00.000Z')
+            const end = new Date('2020-01-01T00:00:30.000Z')
+            const diff = Dates.diff(start, end)
+            expect(diff).toEqual('30 seconds')
+        })
+
+        it('1 minute', () => {
+            const start = new Date('2020-01-01T00:00:00.000Z')
+            const end = new Date('2020-01-01T00:01:00.000Z')
+            const diff = Dates.diff(start, end)
+            expect(diff).toEqual('1 minute')
+        })
+
+        it('5 minutes', () => {
+            const start = new Date('2020-01-01T00:00:00.000Z')
+            const end = new Date('2020-01-01T00:05:00.000Z')
+            const diff = Dates.diff(start, end)
+            expect(diff).toEqual('5.00 minutes')
+        })
+
+        it('2 hours', () => {
+            const start = new Date('2020-01-01T00:00:00.000Z')
+            const end = new Date('2020-01-01T02:00:00.000Z')
+            const diff = Dates.diff(start, end)
+            expect(diff).toEqual('2.00 hours')
+        })
+    })
 })
