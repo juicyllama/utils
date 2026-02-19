@@ -6,8 +6,9 @@ const loadNestException = (name: string): ErrorCtor => {
     try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const nest = require('@nestjs/common') as Record
-        if (typeof nest[name] === 'function') {
-            return nest[name]
+        const maybeCtor = nest[name]
+        if (typeof maybeCtor === 'function') {
+            return maybeCtor as ErrorCtor
         }
     } catch {
         // If NestJS isn't installed, fall back to a minimal Error subclass.
