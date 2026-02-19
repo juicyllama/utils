@@ -66,8 +66,8 @@ export class Dates {
                 milliseconds.length === 1
                     ? '00' + milliseconds
                     : milliseconds.length === 2
-                    ? '0' + milliseconds
-                    : milliseconds
+                      ? '0' + milliseconds
+                      : milliseconds
             )
     }
 

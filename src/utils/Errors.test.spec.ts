@@ -5,7 +5,7 @@ type ErrorCtor = new (message?: string) => Error
 const loadNestException = (name: string): ErrorCtor => {
     try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const nest = require('@nestjs/common') as Record
+        const nest = require('@nestjs/common') as Record<string, unknown>
         const maybeCtor = nest[name]
         if (typeof maybeCtor === 'function') {
             return maybeCtor as ErrorCtor
