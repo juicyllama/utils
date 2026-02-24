@@ -280,6 +280,7 @@ String helpers.
 - `toHTMLConversion(string)` and `fromHTMLtoStringConversion(string)`.
 - `az09Lowercase(string, skipClean?)`.
 - `onlyNumbers(string)`.
+- `slug(string)`: Lowercases, removes symbols, and replaces whitespace with dashes.
 - `plural(word, amount?)` and `singular(word, amount?)`.
 - `stringToEmojis(string)`.
 - `numberToSlackEmojis(number)`.

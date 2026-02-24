@@ -42,7 +42,7 @@ export class Strings {
      * @param {Object} obj
      */
 
-    static replacer(template: string, obj: Record<string, any>) {
+    static replacer(template: string, obj: Record) {
         const keys = Object.keys(obj)
         const func = Function(...keys, 'return `' + template + '`;')
         return func(...keys.map(k => obj[k]))
@@ -120,6 +120,26 @@ export class Strings {
     }
 
     /**
+     * Create a URL-friendly slug
+     *
+     * @param {string} string
+     * @returns {string}
+     */
+
+    static slug(string: string): string {
+        if (typeof string !== 'string') return ''
+        if (string.length === 0) return ''
+
+        return string
+            .normalize('NFKD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/['’]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+    }
+
+    /**
      * Returns the plural of an English word.
      *
      * @export
@@ -131,7 +151,7 @@ export class Strings {
         if (amount !== undefined && amount === 1) {
             return word
         }
-        const plural: Record<string, string> = {
+        const plural: Record = {
             '(quiz)$': '$1zes',
             '^(ox)$': '$1en',
             '([m|l])ouse$': '$1ice',
@@ -151,7 +171,7 @@ export class Strings {
             '(us)$': '$1es',
             '([^s]+)$': '$1s',
         }
-        const irregular: Record<string, string> = {
+        const irregular: Record = {
             move: 'moves',
             foot: 'feet',
             goose: 'geese',
@@ -222,7 +242,7 @@ export class Strings {
         if (amount !== undefined && amount !== 1) {
             return word
         }
-        const singular: Record<string, string> = {
+        const singular: Record = {
             '(quiz)zes$': '$1',
             '(matr)ices$': '$1ix',
             '(vert|ind)ices$': '$1ex',
@@ -252,7 +272,7 @@ export class Strings {
             '(us)es$': '$1',
             s$: '',
         }
-        const irregular: Record<string, string> = {
+        const irregular: Record = {
             move: 'moves',
             foot: 'feet',
             goose: 'geese',
