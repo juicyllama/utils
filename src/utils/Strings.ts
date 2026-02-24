@@ -42,7 +42,7 @@ export class Strings {
      * @param {Object} obj
      */
 
-    static replacer(template: string, obj: Record) {
+    static replacer(template: string, obj: Record<string, any>): string {
         const keys = Object.keys(obj)
         const func = Function(...keys, 'return `' + template + '`;')
         return func(...keys.map(k => obj[k]))
