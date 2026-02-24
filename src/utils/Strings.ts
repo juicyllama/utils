@@ -151,7 +151,7 @@ export class Strings {
         if (amount !== undefined && amount === 1) {
             return word
         }
-        const plural: Record = {
+        const plural: Record<string, string> = {
             '(quiz)$': '$1zes',
             '^(ox)$': '$1en',
             '([m|l])ouse$': '$1ice',
@@ -171,7 +171,7 @@ export class Strings {
             '(us)$': '$1es',
             '([^s]+)$': '$1s',
         }
-        const irregular: Record = {
+        const irregular: Record<string, string> = {
             move: 'moves',
             foot: 'feet',
             goose: 'geese',
@@ -242,7 +242,7 @@ export class Strings {
         if (amount !== undefined && amount !== 1) {
             return word
         }
-        const singular: Record = {
+        const singular: Record<string, string> = {
             '(quiz)zes$': '$1',
             '(matr)ices$': '$1ix',
             '(vert|ind)ices$': '$1ex',
@@ -272,7 +272,7 @@ export class Strings {
             '(us)es$': '$1',
             s$: '',
         }
-        const irregular: Record = {
+        const irregular: Record<string, string> = {
             move: 'moves',
             foot: 'feet',
             goose: 'geese',
